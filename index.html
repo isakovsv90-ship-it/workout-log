@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Тренировки">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#E7EAEE">
+<meta name="theme-color" content="#F2F3F7">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
@@ -16,44 +16,34 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@500;600;700&family=Golos+Text:wght@400;500;600&display=swap">
 <style>
-/* Layout: одна колонка до 720px, нижняя навигация; в тренировке упражнения идут аккордеоном, открыть можно любое.
-   Palette: бетон и сталь (нейтрали с холодным уклоном), один акцент цвета 20-кг блина, семантика отдельно.
-   Type: Fira Sans Condensed для заголовков и цифр (как разметка на блинах), Golos Text для текста. */
-:root {
-  --bg: #E7EAEE;
-  --surface: #F7F8F9;
-  --surface-2: #DCE1E6;
-  --ink: #14181D;
-  --ink-2: #39424B;
-  --muted: #5F6A75;
-  --line: #C8CFD6;
-  --accent: #1E4FD1;
-  --accent-ink: #FFFFFF;
-  --accent-soft: rgba(30, 79, 209, 0.12);
-  --good: #17703F;
-  --good-soft: rgba(23, 112, 63, 0.13);
-  --warn: #8F5200;
-  --warn-soft: rgba(143, 82, 0, 0.14);
-  --bad: #B3261E;
-  --bad-soft: rgba(179, 38, 30, 0.12);
+/* Layout: одна колонка до 720px, нижняя навигация, аккордеон упражнений, поля ввода с подписями колонок.
+   Skins: три оформления на выбор, переключаются в любой момент (атрибут data-skin на корне).
+   Clean: светлое, мягкие скругления, синий акцент (в духе Apple Fitness и Hevy).
+   Midnight: тёмное OLED, мятный акцент (в духе Whoop и Strong).
+   Volt: белое, чёрное и кислотный жёлто-зелёный, острые углы, капслок (в духе Nike Training Club). */
+:root, :root[data-skin="clean"] {
+  --bg: #F2F3F7; --surface: #FFFFFF; --surface-2: #ECEEF3; --ink: #101216; --ink-2: #3D4350; --muted: #666E7C; --line: #E1E4EA;
+  --accent: #0B5FD9; --accent-ink: #FFFFFF; --accent-soft: rgba(11, 95, 217, 0.10);
+  --good: #0F7A43; --good-soft: rgba(15, 122, 67, 0.12); --warn: #8A5200; --warn-soft: rgba(138, 82, 0, 0.13); --bad: #B3261E; --bad-soft: rgba(179, 38, 30, 0.11);
+  --r: 16px; --r-sm: 12px; --h-tt: none; --h-ls: 0.01em; --shadow: 0 1px 2px rgba(16, 18, 22, 0.06);
+  --p25: #C8372D; --p20: #2456C9; --p15: #E2B714; --p10: #2E9A5B; --p5: #F2F2F2; --p2: #2B3036; --p1: #9AA3AD;
   --font-display: "Fira Sans Condensed", "Arial Narrow", system-ui, sans-serif;
   --font-body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0E1215; --surface: #171C21; --surface-2: #222A31; --ink: #ECEFF2; --ink-2: #C3CAD1; --muted: #8E98A3;
-    --line: #2D363F; --accent: #7BA2FF; --accent-ink: #0B1020; --accent-soft: rgba(123, 162, 255, 0.16);
-    --good: #5CCB93; --good-soft: rgba(92, 203, 147, 0.15); --warn: #E3A44F; --warn-soft: rgba(227, 164, 79, 0.16);
-    --bad: #FF8A80; --bad-soft: rgba(255, 138, 128, 0.15);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0E1215; --surface: #171C21; --surface-2: #222A31; --ink: #ECEFF2; --ink-2: #C3CAD1; --muted: #8E98A3;
-  --line: #2D363F; --accent: #7BA2FF; --accent-ink: #0B1020; --accent-soft: rgba(123, 162, 255, 0.16);
-  --good: #5CCB93; --good-soft: rgba(92, 203, 147, 0.15); --warn: #E3A44F; --warn-soft: rgba(227, 164, 79, 0.16);
-  --bad: #FF8A80; --bad-soft: rgba(255, 138, 128, 0.15);
+:root[data-skin="midnight"] {
+  --bg: #000000; --surface: #111317; --surface-2: #1C1F26; --ink: #F4F5F7; --ink-2: #C5CAD3; --muted: #8B93A1; --line: #23272F;
+  --accent: #35D9A5; --accent-ink: #02150E; --accent-soft: rgba(53, 217, 165, 0.16);
+  --good: #6FD99B; --good-soft: rgba(111, 217, 155, 0.15); --warn: #F0B454; --warn-soft: rgba(240, 180, 84, 0.16); --bad: #FF8A80; --bad-soft: rgba(255, 138, 128, 0.15);
+  --r: 14px; --r-sm: 10px; --h-tt: none; --h-ls: 0.01em; --shadow: none; --p5: #E6E8EA; --p2: #3A424B;
   color-scheme: dark;
+}
+:root[data-skin="volt"] {
+  --bg: #FFFFFF; --surface: #F3F3EF; --surface-2: #E6E6DF; --ink: #0A0A0A; --ink-2: #2E2E2B; --muted: #5C5C57; --line: #CFCFC7;
+  --accent: #0A0A0A; --accent-ink: #DDFF3C; --accent-soft: #DDFF3C;
+  --good: #0B7A3E; --good-soft: rgba(11, 122, 62, 0.14); --warn: #8A5200; --warn-soft: rgba(138, 82, 0, 0.15); --bad: #B3261E; --bad-soft: rgba(179, 38, 30, 0.12);
+  --r: 4px; --r-sm: 3px; --h-tt: uppercase; --h-ls: 0.03em; --shadow: none;
+  color-scheme: light;
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -63,30 +53,41 @@ body {
   padding-block: 12px 150px; font-variant-numeric: tabular-nums;
 }
 .wrap { max-width: 720px; margin: 0 auto; }
-h1, h2, h3 { font-family: var(--font-display); margin: 0; letter-spacing: 0.01em; text-wrap: balance; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; letter-spacing: var(--h-ls); text-transform: var(--h-tt); text-wrap: balance; overflow-wrap: anywhere; }
 h1 { font-size: 30px; line-height: 1.1; font-weight: 700; }
 h2 { font-size: 20px; font-weight: 600; margin-top: 8px; }
 h3 { font-size: 18px; font-weight: 600; }
 p { margin: 0; }
 .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); font-weight: 600; }
 .muted { color: var(--muted); }
-.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 12px; }
-.brand { font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; }
-.sync { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; text-align: right; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 10px; }
+.top-r { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.skinbtn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.skinbtn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#skins { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+.skin { font: inherit; text-align: left; cursor: pointer; background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-radius: var(--r); padding: 8px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.skin[aria-pressed="true"] { border-color: var(--accent); }
+.skin b { font-family: var(--font-display); font-size: 15px; line-height: 1.1; }
+.skin span.d { font-size: 11.5px; color: var(--muted); line-height: 1.3; }
+.sw { display: flex; height: 28px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(127, 127, 127, 0.35); }
+.sw i { flex: 1; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.sync { cursor: pointer; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+@media (max-width: 399px) { .sync { font-size: 0; gap: 0; } }
 .sync::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
 .sync[data-s="ok"]::before { background: var(--good); }
 .sync[data-s="err"]::before { background: var(--bad); }
 #app { display: flex; flex-direction: column; gap: 14px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; min-width: 0; }
 .stack { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
 .clock { font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1; color: var(--accent); }
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
-.tile { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.tile b { font-family: var(--font-display); font-size: 26px; font-weight: 600; line-height: 1.05; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; }
+.tile { background: var(--surface-2); border-radius: var(--r-sm); padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tile b { font-family: var(--font-display); font-size: clamp(20px, 6.2vw, 26px); font-weight: 600; line-height: 1.05; white-space: nowrap; }
 .tile span { font-size: 12px; color: var(--muted); }
-.btn { font: inherit; font-weight: 600; min-height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn { font: inherit; font-weight: 600; min-height: 44px; padding: 0 16px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
 .btn:hover { background: var(--surface-2); }
 .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .btn.primary:hover { filter: brightness(1.08); background: var(--accent); }
@@ -105,24 +106,32 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 .target .big { font-family: var(--font-display); font-weight: 700; font-size: 24px; color: var(--accent); }
 .hint { font-size: 13px; color: var(--muted); }
 .sets { display: flex; flex-direction: column; gap: 8px; }
-.set { display: grid; grid-template-columns: 26px minmax(0, 1fr) minmax(0, 1fr) 48px 32px; gap: 8px; align-items: center; }
+.set, .sethead { display: grid; grid-template-columns: 26px minmax(0, 1fr) minmax(0, 1fr) 48px 28px; gap: 8px; align-items: center; }
+.sethead span { font-size: 11px; color: var(--muted); text-align: center; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.2; }
+@media (max-width: 359px) {
+  .set, .sethead { grid-template-columns: 20px minmax(0, 1fr) minmax(0, 1fr) 44px 22px; gap: 6px; }
+  .chk { width: 44px; height: 44px; }
+  .fld input { font-size: 20px; }
+  .ico { width: 22px; }
+  .card { padding: 12px; }
+  .btn { padding: 0 12px; }
+}
 .set .n { font-family: var(--font-display); font-weight: 600; color: var(--muted); font-size: 18px; text-align: center; }
 .set .n.wu { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
 .fld { position: relative; min-width: 0; }
-.fld input { width: 100%; height: 48px; font: 600 22px var(--font-display); text-align: center; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 8px; padding: 0 28px 0 4px; -moz-appearance: textfield; appearance: textfield; }
+.fld input { width: 100%; height: 48px; font: 600 22px var(--font-display); text-align: center; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: var(--r-sm); padding: 0 4px; -moz-appearance: textfield; appearance: textfield; }
 .fld input::-webkit-outer-spin-button, .fld input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.fld span { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--muted); pointer-events: none; }
 .set.wu .fld input { font-weight: 500; color: var(--ink-2); }
 .set.done .fld input { background: var(--accent-soft); border-color: transparent; }
-.chk { width: 48px; height: 48px; border-radius: 8px; border: 1.5px solid var(--line); background: transparent; color: var(--muted); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.chk { width: 48px; height: 48px; border-radius: var(--r-sm); border: 1.5px solid var(--line); background: transparent; color: var(--muted); display: grid; place-items: center; cursor: pointer; padding: 0; }
 .set.done .chk { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .chk svg { width: 24px; height: 24px; }
-.ico { width: 32px; height: 40px; border: 0; background: transparent; color: var(--muted); font-size: 20px; cursor: pointer; padding: 0; }
+.ico { width: 28px; height: 40px; border: 0; background: transparent; color: var(--muted); font-size: 20px; cursor: pointer; padding: 0; }
 .ico:hover { color: var(--bad); }
 .field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .field label { font-size: 12px; color: var(--muted); font-weight: 600; }
-.field input[type="text"], .field input[type="number"], .field select, textarea {
-  font: inherit; font-size: 16px; min-height: 44px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; min-width: 0;
+.field input[type="text"], .field input[type="number"], .field input[type="email"], .field input[type="password"], .field select, textarea {
+  font: inherit; font-size: 16px; min-height: 44px; padding: 0 10px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; min-width: 0;
 }
 textarea { padding: 10px; min-height: 96px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
@@ -133,8 +142,8 @@ textarea { padding: 10px; min-height: 96px; font-family: ui-monospace, Menlo, mo
 .sethist .chip.wu { color: var(--muted); font-weight: 500; }
 .verdict { font-size: 17px; line-height: 1.4; }
 .divider { height: 1px; background: var(--line); }
-.empty { padding: 18px; border: 1px dashed var(--line); border-radius: 10px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; color: var(--ink-2); }
-.list-item { display: flex; justify-content: space-between; gap: 12px; align-items: center; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.empty { padding: 18px; border: 1px dashed var(--line); border-radius: var(--r); display: flex; flex-direction: column; gap: 10px; align-items: flex-start; color: var(--ink-2); }
+.list-item { display: flex; justify-content: space-between; gap: 12px; align-items: center; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; }
 .list-item:hover { background: var(--surface-2); }
 .list-item .t { font-family: var(--font-display); font-weight: 600; font-size: 19px; }
 .arrow-up { color: var(--good); } .arrow-down { color: var(--warn); }
@@ -165,20 +174,35 @@ th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: upp
 .chev { flex: none; width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 2; transition: transform 0.15s; }
 .ex.open .chev { transform: rotate(180deg); }
 .xbody { padding: 4px 14px 14px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+#restbar {
+  position: fixed; left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(68px + env(safe-area-inset-bottom, 0px)); z-index: 19;
+  max-width: 696px; margin: 0 auto; background: var(--ink); color: var(--bg); border-radius: var(--r); padding: 10px 12px 12px; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "lbl time" "btns btns"; gap: 8px 12px; align-items: center;
+}
+#restbar .rl { grid-area: lbl; min-width: 0; }
+#restbar .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; opacity: 0.7; font-weight: 600; }
+#restbar .rn { font-size: 14px; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+#restbar .time { grid-area: time; font-family: var(--font-display); font-size: 40px; font-weight: 600; line-height: 1; text-align: right; }
+#restbar .rb { grid-area: btns; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+#restbar .rb.one { grid-template-columns: 1fr; }
+#restbar button { font: inherit; font-weight: 600; font-size: 14px; min-height: 40px; padding: 0 8px; border-radius: var(--r-sm); border: 1px solid rgba(127, 127, 127, 0.55); background: transparent; color: inherit; cursor: pointer; }
+body.resting { padding-block-end: 250px; }
+[hidden] { display: none !important; }
+#restbar[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
 /* программа */
 .drow { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
 .drow:first-of-type { border-top: 0; }
 .acts { display: flex; gap: 2px; flex: none; }
-.acts button { width: 36px; height: 36px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 8px; font-size: 16px; cursor: pointer; padding: 0; }
+.acts button { width: 36px; height: 36px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: var(--r-sm); font-size: 16px; cursor: pointer; padding: 0; }
 .acts button:hover { background: var(--surface-2); }
 .acts button.x:hover { color: var(--bad); }
 .prow { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.8fr) 36px; gap: 8px; align-items: end; }
-.prow select, .prow input { font: inherit; font-size: 16px; min-height: 44px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; min-width: 0; }
+.prow select, .prow input { font: inherit; font-size: 16px; min-height: 44px; padding: 0 8px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; min-width: 0; }
 .prow .fx { visibility: hidden; }
 details > summary { cursor: pointer; list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
-.acc { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; text-align: left; font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; min-height: 44px; }
+.acc { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; text-align: left; font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; min-height: 44px; }
 .acc h3 { overflow-wrap: anywhere; }
 .prog { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-display); font-weight: 600; font-size: 16px; padding: 2px 10px; border-radius: 99px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
 .prog.ok { background: var(--good-soft); color: var(--good); }
@@ -189,7 +213,7 @@ details > summary::-webkit-details-marker { display: none; }
 .card.ex.fin { border-color: var(--good); }
 .card.ex { gap: 8px; }
 .card.ex[open], .card.ex:has(.sets) { gap: 12px; }
-.bwtag { height: 48px; display: grid; place-items: center; font-size: 13px; color: var(--muted); border: 1px dashed var(--line); border-radius: 8px; }
+.bwtag { height: 48px; display: grid; place-items: center; font-size: 13px; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--r-sm); }
 .set.warm .n { color: var(--warn); font-size: 15px; background: var(--warn-soft); border-radius: 6px; line-height: 28px; }
 .chip.wchip { color: var(--warn); }
 .apr { display: grid; grid-template-columns: 22px repeat(auto-fit, minmax(84px, 1fr)); gap: 8px; align-items: end; padding: 8px 0; border-top: 1px solid var(--line); }
@@ -197,46 +221,33 @@ details > summary::-webkit-details-marker { display: none; }
 .rtex { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: center; padding: 4px 0; border-top: 1px solid var(--line); }
 .rtn { font-family: var(--font-display); color: var(--muted); font-weight: 600; }
 .rtname { min-width: 0; overflow-wrap: anywhere; }
-.pre { white-space: pre-wrap; margin: 0; font: 12px/1.5 ui-monospace, Menlo, monospace; background: var(--bg); padding: 10px; border-radius: 8px; overflow-x: auto; }
+.pre { white-space: pre-wrap; margin: 0; font: 12px/1.5 ui-monospace, Menlo, monospace; background: var(--bg); padding: 10px; border-radius: var(--r-sm); overflow-x: auto; }
 .rtbtn { display: inline-flex; }
 .rtbtn .ico { width: 36px; height: 40px; font-size: 16px; }
 details > summary { list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
-#restbar .rl { min-width: 0; max-width: 36%; }
-#restbar .rn { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.9; }
-#restbar .time { min-width: 0; }
 @media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
 #nav {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line);
   padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
 }
 #nav .in { max-width: 720px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-#nav button { font: inherit; font-size: 11.5px; font-weight: 600; min-height: 52px; border: 0; background: transparent; color: var(--muted); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
+#nav button { font: inherit; font-size: 11.5px; font-weight: 600; min-height: 52px; border: 0; background: transparent; color: var(--muted); border-radius: var(--r-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
 #nav button svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 #nav button[aria-current="true"] { color: var(--accent); background: var(--accent-soft); }
-#restbar {
-  position: fixed; left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(70px + env(safe-area-inset-bottom, 0px)); z-index: 19;
-  max-width: 696px; margin: 0 auto; background: var(--ink); color: var(--bg); border-radius: 12px; padding: 8px 10px 8px 16px; display: flex; align-items: center; gap: 8px; box-shadow: 0 6px 24px rgba(0,0,0,0.25);
-}
-#restbar .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; }
-#restbar .time { font-family: var(--font-display); font-size: 30px; font-weight: 600; line-height: 1; flex: 1; }
-#restbar .time.msg { font-size: 18px; }
-#restbar button { font: inherit; font-weight: 600; font-size: 14px; min-height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid rgba(127,127,127,0.5); background: transparent; color: inherit; cursor: pointer; }
-#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(140px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-weight: 600; z-index: 30; max-width: calc(100% - 32px); opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+#toast { position: fixed; left: 50%; transform: translateX(-50%); top: calc(12px + env(safe-area-inset-top, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: var(--r-sm); font-weight: 600; z-index: 30; max-width: calc(100% - 32px); opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 #toast.on { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
 </style>
+<script>try{var __k=localStorage.getItem('wl-skin');if(!__k)__k=matchMedia('(prefers-color-scheme: dark)').matches?'midnight':'clean';document.documentElement.dataset.skin=__k;}catch(e){}</script>
 
-<style>
-:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); color-scheme: light; }
-body { margin: 0; }
-img { max-width: 100%; }
-[hidden] { display: none !important; }
-</style>
-</head>
-<body>
 <div class="wrap">
-  <header class="top"><div class="brand">Журнал тренировок</div><div class="sync" id="sync" data-s="local">Только на этом устройстве</div></header>
+  <header class="top"><div class="brand">Журнал тренировок</div><div class="top-r"><div class="sync" id="sync" data-s="local" data-act="sync-go">На устройстве</div><button class="skinbtn" id="skinBtn" aria-label="Сменить оформление" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-.6-.3-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14.5" cy="7.5" r="1"/></svg></button></div></header>
+  <div id="skins" hidden role="group" aria-label="Оформление">
+    <button class="skin" data-skin="clean" aria-pressed="true"><span class="sw"><i style="background:#F2F3F7"></i><i style="background:#FFFFFF"></i><i style="background:#0B5FD9"></i></span><b>Clean</b><span class="d">Светлая, мягкая, синий акцент</span></button>
+    <button class="skin" data-skin="midnight" aria-pressed="false"><span class="sw"><i style="background:#000000"></i><i style="background:#1C1F26"></i><i style="background:#35D9A5"></i></span><b>Midnight</b><span class="d">Тёмная, мятный акцент</span></button>
+    <button class="skin" data-skin="volt" aria-pressed="false"><span class="sw"><i style="background:#FFFFFF"></i><i style="background:#0A0A0A"></i><i style="background:#DDFF3C"></i></span><b>Volt</b><span class="d">Контраст, чёрный и неон</span></button>
+  </div>
   <main id="app"></main>
 </div>
 <div id="restbar" hidden></div>
@@ -356,12 +367,13 @@ img { max-width: 100%; }
   var ui = { tab: 'workout', summaryId: null, histOpen: null, editEx: null, confirm: null, progEx: null, open: {}, rest: { end: 0, fired: true, label: '' } };
   var dbDoc = null, dbBusy = false, dbDirty = false, saveTimer = null;
   function setSync(k) {
-    var el = $('#sync'); if (!el) return; el.dataset.s = k;
-    el.textContent = k === 'ok' ? 'Сохранено в аккаунте' : k === 'err' ? 'Не удалось синхронизировать' : 'Только на этом устройстве';
+    cloudStatus = k; var el = $('#sync'); if (!el) return; el.dataset.s = k;
+    el.textContent = k === 'ok' ? 'В облаке' : k === 'err' ? 'Ошибка синхр.' : k === 'busy' ? 'Синхронизация' : 'На устройстве'; el.title = el.textContent;
   }
   function save() {
     state.updatedAt = Date.now();
     try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {}
+    if (CLOUD) { if (auth) { cloudDirty = true; lsSet('wl-dirty', '1'); clearTimeout(cloudTimer); cloudTimer = setTimeout(cloudSync, 1500); } return; }
     dbDirty = true; clearTimeout(saveTimer); saveTimer = setTimeout(pushDb, 900);
   }
   function pushDb() {
@@ -371,6 +383,7 @@ img { max-width: 100%; }
       .catch(function () { dbBusy = false; dbDirty = true; setSync('err'); });
   }
   function initDb() {
+    if (CLOUD) return;
     var c = window.claude; if (!c || !c.use) return;
     Promise.all([c.use('db'), c.use('user')]).then(function (r) {
       var db = r[0], user = r[1]; if (!db || !user) return null;
@@ -394,6 +407,157 @@ img { max-width: 100%; }
       });
     }).catch(function () {});
   }
+
+  /* ---------- облако (Supabase) ---------- */
+  var CLOUD = /*CLOUD*/true;
+  var SB_URL = 'https://lvyefcjgdhpmmoriukos.supabase.co', SB_KEY = 'sb_publishable_Q1ulSPpBqguEGCNSRB2GIw_cGylZ72J';
+  var auth = null, cloudDirty = false, cloudBusy = false, cloudTimer = null, lastSync = 0, refreshing = null, cloudStatus = 'local';
+  try { auth = JSON.parse(localStorage.getItem('wl-auth') || 'null'); cloudDirty = localStorage.getItem('wl-dirty') === '1'; lastSync = +localStorage.getItem('wl-last') || 0; } catch (e) {}
+  function lsSet(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+  function sbFetch(path, opts, token) {
+    opts = opts || {};
+    var h = Object.assign({ apikey: SB_KEY, 'Content-Type': 'application/json' }, opts.headers || {});
+    if (token) h.Authorization = 'Bearer ' + token;
+    return fetch(SB_URL + path, { method: opts.method || 'GET', headers: h, body: opts.body ? JSON.stringify(opts.body) : undefined }).then(function (r) {
+      return r.text().then(function (t) {
+        var j = null; try { j = t ? JSON.parse(t) : null; } catch (e) {}
+        if (!r.ok) { var err = new Error((j && (j.error_description || j.msg || j.message || j.error)) || ('HTTP ' + r.status)); err.status = r.status; throw err; }
+        return j;
+      });
+    });
+  }
+  function ruErr(e) {
+    var m = String((e && e.message) || '');
+    if (/Failed to fetch|NetworkError|Load failed|network/i.test(m)) return 'Нет связи с сервером. Проверьте интернет.';
+    if (/invalid login/i.test(m)) return 'Неверная почта или пароль.';
+    if (/already registered|already been registered/i.test(m)) return 'Эта почта уже зарегистрирована. Нажмите «Войти».';
+    if (/at least|weak|short/i.test(m)) return 'Пароль слишком короткий. Нужно минимум 8 символов.';
+    if (/not confirmed/i.test(m)) return 'Почта не подтверждена. В Supabase нужно выключить «Confirm email».';
+    if (/valid email|invalid format|email address/i.test(m)) return 'Проверьте адрес почты.';
+    if (e && e.status === 429) return 'Слишком много попыток. Подождите минуту.';
+    if (/signups not allowed|signup.*disabled/i.test(m)) return 'Регистрация в Supabase отключена.';
+    return 'Ошибка: ' + m;
+  }
+  function setAuth(s) {
+    if (s) { auth = { access_token: s.access_token, refresh_token: s.refresh_token, expires_at: s.expires_at || Math.floor(Date.now() / 1000) + (s.expires_in || 3600), user: { id: s.user.id, email: s.user.email } }; lsSet('wl-auth', JSON.stringify(auth)); }
+    else { auth = null; lsSet('wl-auth', null); }
+  }
+  function freshToken() {
+    if (!auth) return Promise.reject(new Error('not signed in'));
+    if (auth.expires_at - 60 > Date.now() / 1000) return Promise.resolve(auth.access_token);
+    if (!refreshing) {
+      refreshing = sbFetch('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: { refresh_token: auth.refresh_token } })
+        .then(function (s) { setAuth(s); refreshing = null; return auth.access_token; })
+        .catch(function (e) { refreshing = null; if (e.status === 400 || e.status === 401) { setAuth(null); setSync('local'); render(); } throw e; });
+    }
+    return refreshing;
+  }
+  function cloudPull() {
+    return freshToken().then(function (t) { return sbFetch('/rest/v1/journals?user_id=eq.' + auth.user.id + '&select=data', {}, t); })
+      .then(function (rows) { return rows && rows[0] && rows[0].data && rows[0].data.exercises ? rows[0].data : null; });
+  }
+  function cloudPush() {
+    var stamp = state.updatedAt;
+    return freshToken().then(function (t) {
+      return sbFetch('/rest/v1/journals?on_conflict=user_id', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: { user_id: auth.user.id, data: state, updated_at: new Date().toISOString() } }, t);
+    }).then(function () { if (state.updatedAt === stamp) { cloudDirty = false; lsSet('wl-dirty', null); } lastSync = Date.now(); lsSet('wl-last', String(lastSync)); setSync('ok'); });
+  }
+  function persistLocal() { try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {} }
+  function mergeStates(a, b) {
+    var newer = (b.updatedAt || 0) > (a.updatedAt || 0) ? b : a, older = newer === a ? b : a, out = JSON.parse(JSON.stringify(newer)), ids = {};
+    out.sessions.forEach(function (s) { ids[s.id] = 1; });
+    (older.sessions || []).forEach(function (s) { if (!ids[s.id]) out.sessions.push(s); });
+    out.sessions.sort(function (x, y) { return x.start - y.start; });
+    out.updatedAt = Date.now(); return out;
+  }
+  function adopt(remote) {
+    migrated = false; state = migrate(remote) || remote; persistLocal(); cloudDirty = false; lsSet('wl-dirty', null); lastSync = Date.now(); lsSet('wl-last', String(lastSync));
+    ui.open = {}; ui.syncChoice = null; openFirst(); setSync('ok');
+    if (migrated) { migrated = false; save(); }
+    render();
+  }
+  function cloudSync() {
+    if (!CLOUD || !auth || cloudBusy) return Promise.resolve();
+    cloudBusy = true; setSync('busy');
+    return cloudPull().then(function (remote) {
+      var rt = remote ? (remote.updatedAt || 0) : -1, lt = state.updatedAt || 0;
+      if (!remote) return cloudPush();
+      if (rt > lt) {
+        if (cloudDirty) { state = mergeStates(state, remote); persistLocal(); render(); return cloudPush(); }
+        adopt(remote); return;
+      }
+      if (rt < lt || cloudDirty) return cloudPush();
+      setSync('ok');
+    }).catch(function (e) { setSync('err'); }).then(function () { cloudBusy = false; if (ui.tab === 'manage') updateAcStat(); if (cloudDirty && auth && cloudStatus !== 'err') { clearTimeout(cloudTimer); cloudTimer = setTimeout(cloudSync, 1500); } });
+  }
+  function cloudFirst() {
+    var uid = auth.user.id, prev = null; try { prev = localStorage.getItem('wl-uid'); } catch (e) {}
+    cloudBusy = true; setSync('busy');
+    return cloudPull().then(function (remote) {
+      lsSet('wl-uid', uid);
+      if (prev && prev !== uid) {
+        if (remote) { adopt(remote); return; }
+        state = defaults(); state.sessions = []; state.updatedAt = Date.now(); persistLocal(); ui.open = {}; cloudDirty = true; return cloudPush();
+      }
+      if (!remote) { cloudDirty = true; return cloudPush(); }
+      if (!state.updatedAt) { adopt(remote); return; }
+      if ((remote.updatedAt || 0) === state.updatedAt) { cloudDirty = false; lsSet('wl-dirty', null); setSync('ok'); return; }
+      ui.syncChoice = remote; setSync('local');
+    }).then(function () { cloudBusy = false; ui.acMsg = ''; ui.tab = 'manage'; render(); })
+      .catch(function (e) { cloudBusy = false; setSync('err'); ui.acMsg = ruErr(e); render(); });
+  }
+  function acSetMsg(m) { ui.acMsg = m; var el = $('#acMsg'); if (el) el.textContent = m; }
+  function acAuth(kind) {
+    var emailEl = $('#acEmail'), passEl = $('#acPass'), email = (emailEl ? emailEl.value : ui.acEmail || '').trim(), pass = passEl ? passEl.value : '';
+    ui.acEmail = email;
+    if (!/^\S+@\S+\.\S+$/.test(email)) return acSetMsg('Проверьте адрес почты.');
+    if (pass.length < 8) return acSetMsg('Пароль должен быть не короче 8 символов.');
+    acSetMsg('Подождите…');
+    sbFetch(kind === 'up' ? '/auth/v1/signup' : '/auth/v1/token?grant_type=password', { method: 'POST', body: { email: email, password: pass } }).then(function (s) {
+      if (!s || !s.access_token) { acSetMsg('Аккаунт создан, но вход требует подтверждения почты. В Supabase нужно выключить «Confirm email».'); return; }
+      setAuth(s); return cloudFirst();
+    }).catch(function (e) { acSetMsg(ruErr(e)); });
+  }
+  function acCheck() {
+    acSetMsg('Проверяю…');
+    sbFetch('/auth/v1/settings').then(function (st) {
+      var parts = ['Сервер найден.'];
+      if (st && st.disable_signup) parts.push('Регистрация отключена.');
+      if (st && st.mailer_autoconfirm === false) parts.push('Включено подтверждение почты: выключите «Confirm email» в Supabase.');
+      else if (st && st.mailer_autoconfirm === true) parts.push('Вход по паролю без писем включён.');
+      acSetMsg(parts.join(' '));
+    }).catch(function (e) { acSetMsg(e.status ? 'Сервер ответил ошибкой: ' + e.message : 'Сервер не найден. Проверьте адрес проекта и интернет.'); });
+  }
+  function acStatText() {
+    if (cloudStatus === 'busy') return 'Синхронизация…';
+    if (cloudStatus === 'err') return 'Не удалось синхронизировать. Попробуем позже.';
+    if (cloudDirty) return 'Есть изменения, которые ещё не ушли в облако.';
+    return lastSync ? 'Синхронизировано: ' + dFmt(lastSync, { day: 'numeric', month: 'short' }) + ', ' + tFmt(lastSync) : 'Синхронизация ещё не выполнялась.';
+  }
+  function updateAcStat() { var el = $('#acStat'); if (el) el.textContent = acStatText(); }
+  function accountHTML() {
+    if (!CLOUD) return '';
+    if (ui.syncChoice) {
+      var r = ui.syncChoice, rn = (r.sessions || []).length, ln = state.sessions.length;
+      return '<div class="card" style="border-color:var(--accent)"><h3>Данные есть и в облаке, и на телефоне</h3><p>В облаке тренировок: ' + rn + '. На этом устройстве: ' + ln + '. Что оставить?</p>' +
+        '<button class="btn primary" data-act="sc-merge">Объединить (рекомендуется)</button><button class="btn" data-act="sc-cloud">Взять данные из облака</button><button class="btn" data-act="sc-phone">Загрузить с телефона в облако</button>' +
+        '<p class="hint">При объединении сохранятся все тренировки с обеих сторон, а программа возьмётся из более свежей версии.</p></div>';
+    }
+    if (auth) {
+      return '<div class="card"><div class="row"><h3>Аккаунт</h3><span class="chip good">В облаке</span></div><p style="overflow-wrap:anywhere">' + esc(auth.user.email) + '</p><p class="hint" id="acStat">' + esc(acStatText()) + '</p>' +
+        '<div class="row"><button class="btn small" data-act="ac-sync">Синхронизировать</button><button class="btn small danger" data-act="ac-out">Выйти</button></div>' +
+        '<details><summary class="hint" style="cursor:pointer;min-height:32px;display:flex;align-items:center">Сменить пароль</summary><div class="stack" style="margin-top:8px"><div class="field"><label for="acNew">Новый пароль (от 8 символов)</label><input id="acNew" type="password" autocomplete="new-password"></div><button class="btn small" data-act="ac-pass" style="align-self:flex-start">Сменить пароль</button></div></details>' +
+        '<p class="hint" id="acMsg">' + esc(ui.acMsg || '') + '</p><p class="hint">После выхода данные остаются на этом устройстве. Журнал видите только вы.</p></div>';
+    }
+    return '<div class="card"><h3>Аккаунт</h3><p class="hint">Войдите, чтобы журнал сохранялся в облаке и был на всех ваших устройствах. Данные видите только вы.</p>' +
+      '<div class="field"><label for="acEmail">Почта</label><input id="acEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" value="' + esc(ui.acEmail || '') + '"></div>' +
+      '<div class="field"><label for="acPass">Пароль (от 8 символов)</label><input id="acPass" type="password" autocomplete="current-password"></div>' +
+      '<div class="row"><button class="btn primary" data-act="ac-in">Войти</button><button class="btn" data-act="ac-up">Создать аккаунт</button></div>' +
+      '<p class="hint" id="acMsg">' + esc(ui.acMsg || '') + '</p><button class="btn small" data-act="ac-check" style="align-self:flex-start">Проверить подключение</button></div>';
+  }
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') cloudSync(); });
+  window.addEventListener('online', function () { cloudSync(); });
+
 
   /* ---------- модель и прогрессия ---------- */
   var exById = function (id) { return state.exercises.find(function (e) { return e.id === id; }); };
@@ -549,11 +713,11 @@ img { max-width: 100%; }
       var nx = en.sets.find(function (s) { return !isDone(s); });
       return '<section class="card ex' + (all ? ' fin' : '') + '">' + head + '<p class="hint">' + (nx ? 'Дальше: ' + (nx.warm ? 'разминка, ' : '') + (e.kind === 'bw' ? '' : esc(wl(e, nx.w)) + ' × ') + (nx.r || '') + ' повт. · цель ' + esc(tgtText(e, { top: top, r: t.r })) : 'Все подходы выполнены') + '</p></section>';
     }
-    var sfx = e.kind === 'bw+' ? '+кг' : 'кг', rsfx = e.perSide ? 'на ст.' : 'повт';
+    var wHead = e.kind === 'bw+' ? 'Доп. вес, кг' : e.kind === 'bw' ? 'Вес' : 'Вес, кг', rHead = e.perSide ? 'Повторы на сторону' : 'Повторы';
     var rows = en.sets.map(function (s, i) {
-      var wf = e.kind === 'bw' ? '<div class="fld bwtag">свой вес</div>' : '<div class="fld"><input class="inp" type="number" inputmode="decimal" step="0.5" min="0" data-e="' + ei + '" data-i="' + i + '" data-k="w" value="' + (s.w == null ? '' : s.w) + '" aria-label="Вес, подход ' + (i + 1) + '"><span>' + sfx + '</span></div>';
+      var wf = e.kind === 'bw' ? '<div class="fld bwtag">свой вес</div>' : '<div class="fld"><input class="inp" type="number" inputmode="decimal" step="0.5" min="0" data-e="' + ei + '" data-i="' + i + '" data-k="w" value="' + (s.w == null ? '' : s.w) + '" aria-label="Вес, подход ' + (i + 1) + '"></div>';
       return '<div class="set' + (s.done ? ' done' : '') + (s.warm ? ' warm' : '') + '"><span class="n" title="' + (s.warm ? 'Разминка' : 'Рабочий подход') + '">' + (s.warm ? 'Р' : (i + 1)) + '</span>' + wf +
-        '<div class="fld"><input class="inp" type="number" inputmode="numeric" step="1" min="0" data-e="' + ei + '" data-i="' + i + '" data-k="r" value="' + (s.r == null ? '' : s.r) + '" aria-label="Повторы, подход ' + (i + 1) + '"><span>' + rsfx + '</span></div>' +
+        '<div class="fld"><input class="inp" type="number" inputmode="numeric" step="1" min="0" data-e="' + ei + '" data-i="' + i + '" data-k="r" value="' + (s.r == null ? '' : s.r) + '" aria-label="Повторы, подход ' + (i + 1) + '"></div>' +
         '<button class="chk" data-act="done" data-e="' + ei + '" data-i="' + i + '" aria-pressed="' + !!s.done + '" aria-label="Подход ' + (i + 1) + ' выполнен">' + CHECK + '</button>' +
         '<button class="ico" data-act="delset" data-e="' + ei + '" data-i="' + i + '" aria-label="Удалить подход ' + (i + 1) + '">×</button></div>';
     }).join('');
@@ -561,7 +725,7 @@ img { max-width: 100%; }
     return '<section class="card ex' + (all ? ' fin' : '') + '">' + head +
       '<div class="stack" style="gap:4px"><div class="target"><span class="hint">Цель</span><span class="big">' + esc(tgtText(e, { top: top, r: t.r })) + '</span>' + (e.bar ? platesHTML(top) : '') + '</div>' +
       '<p class="hint">' + esc(t.reason || '') + '</p>' + (last ? '<p class="hint">В прошлый раз (рабочие): ' + esc(last) + '</p>' : '') + (wlab ? '<p class="hint">' + esc(wlab) + '</p>' : '') + (e.note ? '<p class="hint">' + esc(e.note) + '</p>' : '') + '</div>' +
-      '<div class="sets">' + rows + '</div><div class="row"><button class="btn small" data-act="addset" data-e="' + ei + '">+ Подход</button><button class="btn small" data-act="delentry" data-e="' + ei + '">Убрать из тренировки</button></div></section>';
+      '<div class="sets"><div class="sethead"><span></span><span>' + wHead + '</span><span>' + rHead + '</span><span></span><span></span></div>' + rows + '</div><div class="row"><button class="btn small" data-act="addset" data-e="' + ei + '">+ Подход</button><button class="btn small" data-act="delentry" data-e="' + ei + '">Убрать из тренировки</button></div></section>';
   }
   function liveStats() {
     var done = 0, total = 0, vol = 0;
@@ -743,7 +907,7 @@ img { max-width: 100%; }
       return '<div class="card"><div class="row" style="flex-wrap:nowrap"><div class="stack" style="gap:2px;min-width:0"><h3>' + esc(e.name) + '</h3><span class="hint">' + esc(e.group) + ' · ' + e.approaches.length + ' подх. · ' + e.lo + '–' + e.hi + (e.kind === 'bw' ? '' : ' · шаг ' + fmt(e.inc) + ' кг') + (pt ? ' · суперсет' : '') + '</span></div><button class="btn small" data-act="ex-edit" data-id="' + e.id + '">Изменить</button></div>' +
         '<div class="target"><span class="hint">' + (t.first ? 'По плану' : 'Цель') + '</span><span class="big">' + esc(tgtText(e, t)) + '</span></div></div>';
     }).join('');
-    return '<h1>Программа</h1>' + head + importHTML() + '<h2>Тренировочные дни</h2>' + state.routines.map(routineHTML).join('') + '<button class="btn" data-act="rt-new">+ Новый день</button>' +
+    return '<h1>Программа</h1>' + accountHTML() + head + importHTML() + '<h2>Тренировочные дни</h2>' + state.routines.map(routineHTML).join('') + '<button class="btn" data-act="rt-new">+ Новый день</button>' +
       '<h2>Упражнения</h2>' + exs + '<button class="btn" data-act="ex-new">+ Новое упражнение</button>' +
       '<h2>Настройки</h2><div class="card"><div class="grid2"><div class="field"><label for="s-rest">Отдых между подходами, сек</label><input id="s-rest" type="number" min="0" step="15" inputmode="numeric" data-set="rest" value="' + state.settings.rest + '"></div>' +
       '<div class="field"><label for="s-bar">Вес грифа, кг</label><input id="s-bar" type="number" min="0" step="0.5" inputmode="decimal" data-set="bar" value="' + state.settings.bar + '"></div></div></div>' +
@@ -909,15 +1073,16 @@ img { max-width: 100%; }
     var rb = $('#restbar'), left = ui.rest.end - Date.now();
     if (ui.rest.end && left > 0) {
       rb.hidden = false;
-      if (!rb.dataset.on) { rb.dataset.on = '1'; rb.innerHTML = '<div class="rl"><div class="lbl">Отдых</div><div class="rn">' + esc(ui.rest.label) + '</div></div><div class="time" id="rtime"></div><button data-act="rest-m">−15</button><button data-act="rest-p">+15</button><button data-act="rest-x">Пропуск</button>'; }
+      if (!rb.dataset.on) { rb.dataset.on = '1'; rb.innerHTML = '<div class="rl"><div class="lbl">Отдых</div><div class="rn">' + esc(ui.rest.label) + '</div></div><div class="time" id="rtime"></div><div class="rb"><button data-act="rest-m">−15 с</button><button data-act="rest-p">+15 с</button><button data-act="rest-x">Пропуск</button></div>'; }
       $('#rtime').textContent = mmss(left);
     } else if (ui.rest.end && !ui.rest.fired) {
       ui.rest.fired = true; rb.hidden = false; rb.dataset.on = '';
-      rb.innerHTML = '<div class="time" style="font-size:20px">Отдых окончен</div><button data-act="rest-x">Ок</button>';
+      rb.innerHTML = '<div class="rl"><div class="lbl">Отдых окончен</div><div class="rn">Следующий подход</div></div><div class="rb one"><button data-act="rest-x">Ок</button></div>';
       try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
       try { var ac = new (window.AudioContext || window.webkitAudioContext)(), o = ac.createOscillator(), g = ac.createGain(); o.connect(g); g.connect(ac.destination); o.frequency.value = 880; g.gain.value = 0.08; o.start(); o.stop(ac.currentTime + 0.25); } catch (e) {}
       setTimeout(function () { if (ui.rest.end && Date.now() >= ui.rest.end) { ui.rest.end = 0; rb.hidden = true; rb.dataset.on = ''; } }, 4000);
     } else if (!ui.rest.end) { rb.hidden = true; rb.dataset.on = ''; }
+    document.body.classList.toggle('resting', !rb.hidden);
   }
   setInterval(tick, 500);
   function updateLive() { if (!state.active) return; var ls = liveStats(), a = $('#lsets'), b = $('#lvol'); if (a) a.textContent = ls.done + ' из ' + ls.total; if (b) b.textContent = fmt(Math.round(ls.vol)); }
@@ -975,6 +1140,17 @@ img { max-width: 100%; }
       case 'rt-dn': rt = state.routines.find(function (r) { return r.id === d.id; }); move(rt.ex, +d.i, 1); save(); return render();
       case 'rt-rm': rt = state.routines.find(function (r) { return r.id === d.id; }); rt.ex.splice(+d.i, 1); save(); return render();
       case 'rt-add': rt = state.routines.find(function (r) { return r.id === d.id; }); var sl = $('#add-' + d.id); if (sl && sl.value) { rt.ex.push(sl.value); save(); render(); } return;
+      case 'sync-go': if (CLOUD) { ui.tab = 'manage'; render(); window.scrollTo(0, 0); if (auth) cloudSync(); } return;
+      case 'ac-in': return acAuth('in');
+      case 'ac-up': return acAuth('up');
+      case 'ac-check': return acCheck();
+      case 'ac-sync': return cloudSync().then(function () { acSetMsg(cloudStatus === 'err' ? 'Не удалось. Проверьте интернет.' : ''); });
+      case 'ac-out': setAuth(null); cloudDirty = false; setSync('local'); ui.acMsg = ''; return render();
+      case 'ac-pass': var np = $('#acNew'); if (!np || np.value.length < 8) return acSetMsg('Пароль должен быть не короче 8 символов.');
+        return freshToken().then(function (t) { return sbFetch('/auth/v1/user', { method: 'PUT', body: { password: np.value } }, t); }).then(function () { np.value = ''; acSetMsg('Пароль изменён.'); }).catch(function (e) { acSetMsg(ruErr(e)); });
+      case 'sc-merge': state = mergeStates(state, ui.syncChoice); persistLocal(); ui.syncChoice = null; cloudDirty = true; render(); return cloudPush().then(function () { render(); }).catch(function () { setSync('err'); });
+      case 'sc-cloud': return adopt(ui.syncChoice);
+      case 'sc-phone': ui.syncChoice = null; state.updatedAt = Date.now(); persistLocal(); cloudDirty = true; render(); return cloudPush().then(function () { render(); }).catch(function () { setSync('err'); });
       case 'copy':
         var txt = JSON.stringify(state), ta = $('#bkText'), fb = function () { var det = $('#bk'); if (det) det.open = true; if (ta) { ta.focus(); ta.select(); } toast('Выдели текст и скопируй вручную'); };
         try { navigator.clipboard.writeText(txt).then(function () { toast('Данные скопированы'); }, fb); } catch (x) { fb(); } return;
@@ -1040,6 +1216,19 @@ img { max-width: 100%; }
     if (t.dataset.rts) { var r2 = state.routines.find(function (q) { return q.id === t.dataset.rts; }); if (r2) { r2.sub = t.value.trim(); save(); } return; }
     if (t.dataset.set) { v = parseFloat(t.value); if (!isNaN(v) && v >= 0) { state.settings[t.dataset.set] = v; save(); } else render(); }
   });
+  var SKIN_BG = { clean: '#F2F3F7', midnight: '#000000', volt: '#FFFFFF' };
+  function applySkin(k, store) {
+    if (!SKIN_BG[k]) k = 'clean';
+    document.documentElement.dataset.skin = k;
+    if (store) { try { localStorage.setItem('wl-skin', k); } catch (e) {} }
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', SKIN_BG[k]);
+    document.querySelectorAll('.skin').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.skin === k)); });
+  }
+  document.addEventListener('click', function (e) {
+    var sb = e.target.closest('.skin'); if (sb) { applySkin(sb.dataset.skin, true); return; }
+    if (e.target.closest('#skinBtn')) { var pn = $('#skins'), open = pn.hidden; pn.hidden = !open; $('#skinBtn').setAttribute('aria-expanded', String(open)); }
+  });
+  applySkin(document.documentElement.dataset.skin || 'clean', false);
   var rz = null;
   window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { if (ui.tab === 'progress') render(); }, 250); });
 
@@ -1048,7 +1237,6 @@ img { max-width: 100%; }
   if (migrated) save();
   render();
   initDb();
+  if (CLOUD && auth) cloudSync();
 })();
 </script>
-</body>
-</html>
