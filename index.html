@@ -128,6 +128,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 .bdg.on { opacity: 1; background: var(--accent-soft); }
 .bdg b { font-size: 20px; color: var(--accent); } .bdg span { font-weight: 600; font-size: 13px; overflow-wrap: anywhere; } .bdg small { font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
 :root[data-skin="volt"] .bdg { border: 2px solid #0A0A0A; border-radius: 4px; } :root[data-skin="volt"] .bdg b { color: #0A0A0A; }
+.lb { display: flex; flex-direction: column; gap: 6px; }
+.lbr { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 10px; border-radius: var(--r-sm); background: var(--surface-2); }
+.lbr.me { background: var(--accent-soft); outline: 1.5px solid var(--accent); }
+.lbr .rk { font: 700 18px var(--font-display); color: var(--muted); text-align: center; } .lbr .nm { overflow-wrap: anywhere; font-weight: 600; } .lbr small { color: var(--muted); font-weight: 400; }
+:root[data-skin="volt"] .lbr { border: 2px solid #0A0A0A; border-radius: 4px; } :root[data-skin="volt"] .lbr.me { background: #DDFF3C; outline: 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .target { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .target .big { font-family: var(--font-display); font-weight: 700; font-size: 24px; color: var(--accent); }
@@ -239,7 +244,7 @@ body.resting { padding-block-end: 250px; }
 :root[data-skin="volt"] .btn.danger { border-color: var(--bad); }
 :root[data-skin="volt"] .list-item { border-width: 2px; box-shadow: 3px 3px 0 #0A0A0A; }
 :root[data-skin="volt"] #nav button { text-transform: uppercase; letter-spacing: 0.03em; min-width: 0; }
-@media (max-width: 359px) { :root[data-skin="volt"] #nav button { font-size: 10px; letter-spacing: 0; } }
+@media (max-width: 359px) { #nav .in button { padding: 0; font-size: 9px; } :root[data-skin="volt"] #nav .in button { font-size: 8.5px; letter-spacing: 0; } }
 :root[data-skin="volt"] .dot.on { background: #0A0A0A; }
 :root[data-skin="volt"] .target .big, :root[data-skin="volt"] .clock { background: #DDFF3C; padding: 0 6px; border-radius: 3px; color: #0A0A0A; width: fit-content; }
 :root[data-skin="clean"] h1 { background: linear-gradient(135deg, #15122B 30%, #5B45F0 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
@@ -290,7 +295,7 @@ details > summary::-webkit-details-marker { display: none; }
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--nav-bg); border-top: 1px solid var(--nav-bd); -webkit-backdrop-filter: saturate(1.6) blur(14px); backdrop-filter: saturate(1.6) blur(14px);
   padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
 }
-#nav .in { max-width: 720px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+#nav .in { max-width: 720px; margin: 0 auto; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
 #nav button { font: inherit; font-size: 11.5px; font-weight: 600; min-height: 52px; border: 0; background: transparent; color: var(--nav-ink); border-radius: var(--r-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
 #nav button svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 #nav button[aria-current="true"] { color: var(--nav-on); background: var(--nav-on-bg); }
@@ -315,6 +320,7 @@ details > summary::-webkit-details-marker { display: none; }
   <button data-act="tab" data-tab="workout"><svg viewBox="0 0 24 24"><path d="M6 7v10M18 7v10M3 9.5v5M21 9.5v5M6 12h12"/></svg>Тренировка</button>
   <button data-act="tab" data-tab="history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>История</button>
   <button data-act="tab" data-tab="progress"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"/></svg>Прогресс</button>
+  <button data-act="tab" data-tab="group" id="navGroup"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3.3 2.7-5 6-5s6 1.7 6 5M16 11a3 3 0 100-6M18 14c2 .5 3 2 3 5"/></svg>Группа</button>
   <button data-act="tab" data-tab="manage"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Программа</button>
 </div></nav>
 
@@ -537,19 +543,26 @@ details > summary::-webkit-details-marker { display: none; }
     if (migrated) { migrated = false; save(); }
     render();
   }
+  function cloudPeek() {
+    return freshToken().then(function (t) { return sbFetch('/rest/v1/journals?user_id=eq.' + auth.user.id + '&select=ts:data-%3E%3EupdatedAt', {}, t); })
+      .then(function (rows) { return rows && rows[0] ? (+rows[0].ts || 0) : null; });
+  }
   function cloudSync() {
     if (!CLOUD || !auth || cloudBusy) return Promise.resolve();
     cloudBusy = true; setSync('busy');
-    return cloudPull().then(function (remote) {
-      var rt = remote ? (remote.updatedAt || 0) : -1, lt = state.updatedAt || 0;
-      if (!remote) return cloudPush();
+    return cloudPeek().then(function (rt) {
+      var lt = state.updatedAt || 0;
+      if (rt === null) return cloudPush();
       if (rt > lt) {
-        if (cloudDirty) { state = mergeStates(state, remote); persistLocal(); render(); return cloudPush(); }
-        adopt(remote); return;
+        return cloudPull().then(function (remote) {
+          if (!remote) return cloudPush();
+          if (cloudDirty) { state = mergeStates(state, remote); persistLocal(); render(); return cloudPush(); }
+          adopt(remote);
+        });
       }
       if (rt < lt || cloudDirty) return cloudPush();
       setSync('ok');
-    }).catch(function (e) { setSync('err'); }).then(function () { cloudBusy = false; if (ui.tab === 'manage') updateAcStat(); if (cloudDirty && auth && cloudStatus !== 'err') { clearTimeout(cloudTimer); cloudTimer = setTimeout(cloudSync, 1500); } });
+    }).catch(function (e) { setSync('err'); }).then(function () { cloudBusy = false; if (cloudStatus === 'ok') statsPush().catch(function () {}); if (ui.tab === 'manage') updateAcStat(); if (cloudDirty && auth && cloudStatus !== 'err') { clearTimeout(cloudTimer); cloudTimer = setTimeout(cloudSync, 1500); } });
   }
   function cloudFirst() {
     var uid = auth.user.id, prev = null; try { prev = localStorage.getItem('wl-uid'); } catch (e) {}
@@ -640,6 +653,9 @@ details > summary::-webkit-details-marker { display: none; }
     while (wk[d.getTime()]) { n++; d.setDate(d.getDate() - 7); d = new Date(weekStart(d.getTime())); }
     return n;
   }
+  var _m = { k: '', v: {} };
+  function memo(name, fn) { var k = (state.updatedAt || 0) + ':' + state.sessions.length + ':' + (state.body || []).length + ':' + new Date().toDateString(); if (_m.k !== k) _m = { k: k, v: {} }; if (!(name in _m.v)) _m.v[name] = fn(); return _m.v[name]; }
+  function xpTotal() { return memo('xp', function () { return sum(state.sessions.map(xpOf)); }); }
   function xpOf(s) { var sets = sum(s.entries.map(function (en) { return en.sets.filter(function (x) { return !x.warm; }).length; })); return Math.round(50 + 4 * sets + sessVol(s) / 250); }
   function lvlInfo(xp) { var L = 1, need = 200; while (xp >= need) { xp -= need; L++; need += 100; } return { L: L, cur: xp, need: need }; }
   function lvlName(L) { return L < 3 ? 'Новичок' : L < 6 ? 'Любитель' : L < 10 ? 'Атлет' : L < 15 ? 'Профи' : 'Мастер'; }
@@ -656,7 +672,8 @@ details > summary::-webkit-details-marker { display: none; }
     else { pct = (+g.pct || 0) / 100; txt = Math.round(pct * 100) + '%'; }
     pct = Math.max(0, Math.min(1, pct || 0)); return { pct: pct, txt: txt };
   }
-  function badgeCtx() {
+  function badgeCtx() { return memo('badge', badgeCtx0); }
+  function badgeCtx0() {
     var vol = sum(state.sessions.map(sessVol)), prs = sum(state.sessions.map(function (s) { return analyze(s).prs; })), gp = goalProg(state.goal);
     return { n: state.sessions.length, vol: vol, prs: prs, streak: weekStreak(), body: (state.body || []).length, goal: !!(gp && gp.pct >= 1) };
   }
@@ -690,7 +707,7 @@ details > summary::-webkit-details-marker { display: none; }
       '<div class="row"><button class="btn primary" data-act="goal-save">Сохранить</button><button class="btn" data-act="goal-cancel">Отмена</button></div></div>';
   }
   function meHTML() {
-    var xp = sum(state.sessions.map(xpOf)), L = lvlInfo(xp), st = weekStreak(), g = state.goal, gp = goalProg(g), b = bodyList(), P = state.program;
+    var xp = xpTotal(), L = lvlInfo(xp), st = weekStreak(), g = state.goal, gp = goalProg(g), b = bodyList(), P = state.program;
     var lvl = '<div class="card"><div class="row" style="flex-wrap:nowrap"><div class="stack" style="gap:0;min-width:0"><span class="eyebrow">Уровень ' + L.L + '</span><h3>' + lvlName(L.L) + '</h3></div><div class="stack" style="gap:0;text-align:right"><b>' + st + ' ' + plural(st, ['неделя', 'недели', 'недель']) + '</b><span class="hint">серия</span></div></div>' + bar(L.cur / L.need) + '<span class="hint">Опыт: ' + L.cur + ' из ' + L.need + ' до следующего уровня. Всего ' + xp + '.</span></div>';
     var goal;
     if (ui.gForm) goal = goalFormHTML();
@@ -704,6 +721,206 @@ details > summary::-webkit-details-marker { display: none; }
     return lvl + goal + body + bd;
   }
   function progressHTML() { var h = progressCore(); var i = h.indexOf('</h1>'); return i < 0 ? h : h.slice(0, i + 5) + meHTML() + h.slice(i + 5); }
+
+  /* ---------- группы и рейтинг ---------- */
+  var METRICS = {
+    xp: { name: 'Опыт', fmt: function (v) { return fmt(v) + ' оп.'; } },
+    sessions30: { name: 'Тренировок за 30 дней', fmt: function (v) { return fmt(v); } },
+    streak: { name: 'Серия недель', fmt: function (v) { return fmt(v) + ' нед.'; } },
+    gain30: { name: 'Рост силы за 30 дней', fmt: function (v) { return (v > 0 ? '+' : '') + fmt(v) + '%'; } },
+    vol30: { name: 'Объём за 30 дней', fmt: function (v) { return fmt(v) + ' т'; } }
+  };
+  function gainBetween(a, z) {
+    var gains = [];
+    state.exercises.forEach(function (e) {
+      if (e.kind === 'bw') return;
+      var before = 0, after = 0;
+      state.sessions.forEach(function (s) { s.entries.forEach(function (en) { if (en.ex !== e.id) return; en.sets.forEach(function (x) { if (x.warm || !(x.w > 0)) return; var v = e1(x.w, x.r); if (s.start < a) before = Math.max(before, v); else if (s.start <= z) after = Math.max(after, v); }); }); });
+      if (before > 0 && after > 0) gains.push((after / before - 1) * 100);
+    });
+    return gains.length ? Math.round(sum(gains) / gains.length * 10) / 10 : 0;
+  }
+  function statsOf() { return memo('stats', statsOf0); }
+  function statsOf0() {
+    var now = Date.now(), d30 = now - 30 * 864e5, S = state.sessions, rec = S.filter(function (s) { return s.start >= d30; }), xp = xpTotal();
+    return { xp: xp, level: lvlInfo(xp).L, sessions30: rec.length, streak: weekStreak(), vol30: Math.round(sum(rec.map(sessVol)) / 100) / 10, gain30: gainBetween(d30, now), total: S.length };
+  }
+  var grp = { list: null, stats: null, members: {}, busy: false, err: '', tours: [], scores: [], tMissing: false };
+  function myName() { return (state.profile && state.profile.name) || ''; }
+  function statsPush() {
+    if (!CLOUD || !auth || !myName() || (state.profile && state.profile.hidden)) return Promise.resolve();
+    return freshToken().then(function (t) { return sbFetch('/rest/v1/stats?on_conflict=user_id', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: { user_id: auth.user.id, name: myName(), data: statsOf(), updated_at: new Date().toISOString() } }, t); });
+  }
+  function grpLoad() {
+    if (!CLOUD || !auth) return Promise.resolve();
+    grp.busy = true; grp.err = ''; if (ui.tab === 'group') render();
+    return statsPush().catch(function () {}).then(function () { return freshToken(); }).then(function (t) {
+      return Promise.all([
+        sbFetch('/rest/v1/group_members?select=group_id,groups(id,name,code)', {}, t),
+        sbFetch('/rest/v1/stats?select=user_id,name,data', {}, t)
+      ]).then(function (r) {
+        grp.list = (r[0] || []).filter(function (x) { return x.groups; }).map(function (x) { return x.groups; }); grp.stats = r[1] || [];
+        return Promise.all(grp.list.map(function (g) { return sbFetch('/rest/v1/group_members?group_id=eq.' + g.id + '&select=user_id', {}, t).then(function (m) { grp.members[g.id] = (m || []).map(function (x) { return x.user_id; }); }); }));
+      }).then(function () { return tourLoad(t); });
+    }).catch(function (e) { grp.err = /relation|schema|does not exist|404/i.test(String(e && e.message)) || (e && e.status === 404) ? 'Таблицы групп ещё не созданы в Supabase. Выполните SQL из файла supabase-groups.sql.' : ruErr(e); })
+      .then(function () { grp.busy = false; if (ui.tab === 'group') render(); });
+  }
+  function todayStr() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function addDays(s, n) { var d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function dRu(s) { return new Date(s + 'T12:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }); }
+  var TM = {
+    sessions: { name: 'Число тренировок', fmt: function (v) { return fmt(v); } },
+    volume: { name: 'Объём', fmt: function (v) { return fmt(v) + ' т'; } },
+    xp: { name: 'Опыт', fmt: function (v) { return fmt(v) + ' оп.'; } },
+    gain: { name: 'Рост силы', fmt: function (v) { return (v > 0 ? '+' : '') + fmt(v) + '%'; } },
+    volrel: { name: 'Объём на кг веса тела', fmt: function (v) { return fmt(v) + ' кг/кг'; } }
+  };
+  function tourScore(m, sd, ed) {
+    var a = new Date(sd + 'T00:00:00').getTime(), z = new Date(ed + 'T23:59:59').getTime(), inw = state.sessions.filter(function (s) { return s.start >= a && s.start <= z; });
+    if (m === 'sessions') return inw.length;
+    if (m === 'xp') return sum(inw.map(xpOf));
+    if (m === 'gain') return gainBetween(a, z);
+    var vol = sum(inw.map(sessVol));
+    if (m === 'volume') return Math.round(vol / 100) / 10;
+    var b = bodyList(), kg = b.length ? b[b.length - 1].kg : 0; return kg ? Math.round(vol / kg * 10) / 10 : 0;
+  }
+  function tourLoad(t) {
+    grp.tMissing = false;
+    return sbFetch('/rest/v1/tournaments?select=*&order=start_date.desc', {}, t).then(function (tl) {
+      grp.tours = tl || []; var td = todayStr(), hidden = state.profile && state.profile.hidden;
+      var mine = hidden ? [] : grp.tours.filter(function (x) { return x.start_date <= td; }).map(function (x) { return { tournament_id: x.id, user_id: auth.user.id, score: tourScore(x.metric, x.start_date, x.end_date), updated_at: new Date().toISOString() }; });
+      return (mine.length ? sbFetch('/rest/v1/tournament_scores?on_conflict=tournament_id,user_id', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: mine }, t) : Promise.resolve())
+        .then(function () { return sbFetch('/rest/v1/tournament_scores?select=tournament_id,user_id,score', {}, t); }).then(function (sc) { grp.scores = sc || []; });
+    }).catch(function (e) { grp.tours = []; grp.scores = []; if (e && (e.status === 404 || /relation|schema|does not exist/i.test(String(e.message)))) grp.tMissing = true; });
+  }
+  function tourHTML(g) {
+    var td = todayStr(), names = {}; (grp.stats || []).forEach(function (s) { names[s.user_id] = s.name; });
+    var list = grp.tours.filter(function (x) { return x.group_id === g.id; }), me = auth.user.id;
+    var cards = list.map(function (x) {
+      var st = x.end_date < td ? 'done' : x.start_date > td ? 'soon' : 'live', ids = grp.members[g.id] || [], sc = {}; grp.scores.forEach(function (s) { if (s.tournament_id === x.id) sc[s.user_id] = +s.score; });
+      var rows = ids.map(function (id) { return { id: id, v: sc[id] || 0, has: id in sc }; }).sort(function (a, b) { return b.v - a.v; });
+      var win = st === 'done' && rows.length && rows[0].has && rows[0].v > 0 ? names[rows[0].id] || 'Участник' : '';
+      var lines = st === 'soon' ? '<p class="hint">Старт ' + dRu(x.start_date) + '. Результаты появятся с первого дня.</p>' : rows.map(function (r, i) { return '<div class="lbr' + (r.id === me ? ' me' : '') + '"><span class="rk">' + (i + 1) + '</span><span class="nm">' + esc(names[r.id] || 'Участник скрыт') + (r.id === me ? ' (вы)' : '') + '</span><b>' + TM[x.metric].fmt(r.v) + '</b></div>'; }).join('');
+      return '<div class="card" style="background:var(--surface-2)"><div class="row"><h3>' + esc(x.name) + '</h3><span class="chip' + (st === 'live' ? ' good' : '') + '">' + (st === 'live' ? 'Идёт до ' + dRu(x.end_date) : st === 'soon' ? 'Скоро' : 'Завершён') + '</span></div>' +
+        '<span class="hint">' + TM[x.metric].name + ' · ' + dRu(x.start_date) + ' – ' + dRu(x.end_date) + (x.prize ? ' · Приз: ' + esc(x.prize) : '') + '</span>' + (win ? '<p><b>Победитель: ' + esc(win) + '</b></p>' : '') + '<div class="lb">' + lines + '</div>' +
+        (x.created_by === me ? (ui.confirm === 'tdel:' + x.id ? '<button class="btn danger solid small" data-act="tour-del-ok" data-id="' + x.id + '" style="align-self:flex-start">Точно удалить</button>' : '<button class="btn danger small" data-act="tour-del" data-id="' + x.id + '" style="align-self:flex-start">Удалить турнир</button>') : '') + '</div>';
+    }).join('');
+    var form = ui.tForm === g.id ? '<div class="card" style="background:var(--surface-2)"><h3>Новый турнир</h3><div class="field"><label for="tName">Название</label><input id="tName" type="text" maxlength="40" placeholder="Например: Ноябрьский челлендж"></div>' +
+      '<div class="field"><label for="tMetric">Что считаем</label><select id="tMetric">' + Object.keys(TM).map(function (k) { return '<option value="' + k + '">' + TM[k].name + '</option>'; }).join('') + '</select></div>' +
+      '<div class="grid2"><div class="field"><label for="tStart">Начало</label><input id="tStart" type="date" value="' + td + '"></div><div class="field"><label for="tEnd">Конец</label><input id="tEnd" type="date" value="' + addDays(td, 14) + '"></div></div>' +
+      '<div class="field"><label for="tPrize">Приз (необязательно)</label><input id="tPrize" type="text" maxlength="60" placeholder="Например: кофе от проигравших"></div><p class="hint" id="tMsg"></p>' +
+      '<div class="row"><button class="btn primary" data-act="tour-save" data-id="' + g.id + '">Создать</button><button class="btn" data-act="tour-cancel">Отмена</button></div></div>' : '<button class="btn small" data-act="tour-new" data-id="' + g.id + '" style="align-self:flex-start">+ Турнир</button>';
+    return '<h3 style="margin-top:6px">Турниры</h3>' + (grp.tMissing ? '<p class="hint">Для турниров выполните SQL из файла supabase-tournaments.sql.</p>' : cards + form);
+  }
+  function grpRpc(fn, body) { return freshToken().then(function (t) { return sbFetch('/rest/v1/rpc/' + fn, { method: 'POST', body: body }, t); }); }
+  function grpBoard(g) {
+    var m = ui.lbMetric || 'xp', ids = grp.members[g.id] || [], byId = {}; (grp.stats || []).forEach(function (s) { byId[s.user_id] = s; });
+    var rows = ids.map(function (id) { var s = byId[id], v = s && s.data && typeof s.data[m] === 'number' ? s.data[m] : 0; return { id: id, name: (s && s.name) || 'Участник скрыт', lvl: s && s.data ? s.data.level : 1, v: v }; });
+    rows.sort(function (a, b) { return b.v - a.v; });
+    var me = auth && auth.user.id;
+    return rows.map(function (r, i) { return '<div class="lbr' + (r.id === me ? ' me' : '') + '"><span class="rk">' + (i + 1) + '</span><span class="nm">' + esc(r.name) + (r.id === me ? ' (вы)' : '') + '<small> · ур. ' + (r.lvl || 1) + '</small></span><b>' + METRICS[m].fmt(r.v) + '</b></div>'; }).join('');
+  }
+  function groupHTML() {
+    if (!CLOUD) return '<h1>Группа</h1><div class="empty"><p>Группы работают в версии приложения на телефоне.</p></div>';
+    if (!auth) return '<h1>Группа</h1><div class="card"><h3>Нужен аккаунт</h3><p class="hint">Войдите в аккаунт на вкладке «Программа», чтобы создать группу или вступить в неё.</p><button class="btn primary" data-act="sync-go">Открыть вход</button></div>';
+    if (grp.list === null && !grp.busy && !grp.err) { grp.busy = true; setTimeout(grpLoad, 0); }
+    var nm = '<div class="card"><h3>Ваше имя в рейтинге</h3><div class="row" style="flex-wrap:nowrap;align-items:flex-end"><div class="field" style="flex:1"><label for="pName">Имя или ник</label><input id="pName" type="text" maxlength="24" autocomplete="nickname" value="' + esc(myName()) + '"></div><button class="btn" data-act="pname-save">Сохранить</button></div><p class="hint">В рейтинге видны только имя и общие числа: уровень, серия, число тренировок, объём. Журнал и вес тела остаются у вас.</p></div>';
+    var err = grp.err ? '<div class="card"><p style="color:var(--bad)">' + esc(grp.err) + '</p><button class="btn small" data-act="grp-reload">Повторить</button></div>' : '';
+    var chips = Object.keys(METRICS).map(function (k) { return '<button class="chipb" data-act="lb-m" data-m="' + k + '" aria-pressed="' + ((ui.lbMetric || 'xp') === k) + '">' + METRICS[k].name + '</button>'; }).join('');
+    var gs = (grp.list || []).map(function (g) {
+      return '<div class="card"><div class="row"><h3>' + esc(g.name) + '</h3><span class="chip">Код: ' + esc(g.code) + '</span></div>' +
+        '<div class="row"><button class="btn small" data-act="grp-share" data-code="' + esc(g.code) + '" data-name="' + esc(g.name) + '">Пригласить друга</button><button class="btn small danger" data-act="' + (ui.confirm === 'leave:' + g.id ? 'grp-leave-ok' : 'grp-leave') + '" data-id="' + g.id + '">' + (ui.confirm === 'leave:' + g.id ? 'Точно выйти' : 'Выйти') + '</button></div>' +
+        '<div class="chips">' + chips + '</div><div class="lb">' + grpBoard(g) + '</div>' + tourHTML(g) + '</div>';
+    }).join('');
+    var join = '<div class="card"><h3>' + ((grp.list || []).length ? 'Ещё одна группа' : 'Создайте группу или вступите') + '</h3>' +
+      '<div class="row" style="flex-wrap:nowrap;align-items:flex-end"><div class="field" style="flex:1"><label for="gNew">Название новой группы</label><input id="gNew" type="text" maxlength="40"></div><button class="btn primary" data-act="grp-new">Создать</button></div>' +
+      '<div class="row" style="flex-wrap:nowrap;align-items:flex-end"><div class="field" style="flex:1"><label for="gCode">Код от друга</label><input id="gCode" type="text" maxlength="12" autocapitalize="characters" autocomplete="off"></div><button class="btn" data-act="grp-join">Вступить</button></div><p class="hint" id="gMsg">' + esc(ui.gMsg || '') + '</p></div>';
+    return '<h1>Группа</h1>' + nm + err + (grp.busy && grp.list === null ? '<div class="empty"><p>Загружаю…</p></div>' : gs + join) + privHTML() + (grp.list ? '<button class="btn small" data-act="grp-reload" style="align-self:flex-start">Обновить рейтинг</button>' : '');
+  }
+  function privHTML() {
+    var hid = state.profile && state.profile.hidden;
+    return '<div class="card"><h3>Приватность и данные</h3><p class="hint">Группа видит только имя, уровень, серию, число тренировок, объём и рост силы. Журнал, вес тела и программа не передаются.</p>' +
+      '<button class="btn small" data-act="priv-hide" style="align-self:flex-start">' + (hid ? 'Снова показывать меня в рейтингах' : 'Скрыть меня из рейтингов') + '</button>' +
+      (ui.confirm === 'delacc' ? '<p style="color:var(--bad)">Будут удалены аккаунт, журнал в облаке, членство в группах и ваши результаты. Данные на этом телефоне останутся. Это нельзя отменить.</p><div class="row"><button class="btn danger solid small" data-act="priv-del-ok">Да, удалить всё в облаке</button><button class="btn small" data-act="confirm-no">Отмена</button></div>' : '<button class="btn danger small" data-act="priv-del" style="align-self:flex-start">Удалить аккаунт и облачные данные</button>') + '<p class="hint" id="pvMsg"></p></div>';
+  }
+  function gMsg(m) { ui.gMsg = m; var el = $('#gMsg'); if (el) el.textContent = m; }
+  function grpAct(a, d) {
+    if (a === 'pname-save') { var n = ($('#pName').value || '').trim().slice(0, 24); if (!n) return toast('Введите имя'); state.profile = { name: n }; save(); toast('Имя сохранено'); return grpLoad(); }
+    if (a === 'priv-hide') {
+      state.profile = state.profile || {}; state.profile.hidden = !state.profile.hidden; save();
+      if (state.profile.hidden) { return freshToken().then(function (t) { return Promise.all([sbFetch('/rest/v1/stats?user_id=eq.' + auth.user.id, { method: 'DELETE' }, t), sbFetch('/rest/v1/tournament_scores?user_id=eq.' + auth.user.id, { method: 'DELETE' }, t)]); }).then(function () { toast('Вы скрыты из рейтингов'); grp.list = null; return grpLoad(); }).catch(function (e) { grp.err = ruErr(e); render(); }); }
+      toast('Вы снова в рейтингах'); grp.list = null; return grpLoad();
+    }
+    if (a === 'priv-del') { ui.confirm = 'delacc'; return render(); }
+    if (a === 'priv-del-ok') {
+      ui.confirm = null; return grpRpc('delete_my_account', {}).then(function () { setAuth(null); cloudDirty = false; lsSet('wl-uid', null); setSync('local'); grp.list = null; ui.tab = 'manage'; render(); toast('Аккаунт и облачные данные удалены'); })
+        .catch(function (e) { var el = $('#pvMsg'); if (el) el.textContent = e.status === 404 ? 'Нужно выполнить SQL из файла supabase-tournaments.sql.' : ruErr(e); });
+    }
+    if (a === 'tour-new') { ui.tForm = d.id; return render(); }
+    if (a === 'tour-cancel') { ui.tForm = null; return render(); }
+    if (a === 'tour-save') {
+      var nm = ($('#tName').value || '').trim(), sd = $('#tStart').value, ed = $('#tEnd').value, tm = $('#tMsg');
+      if (!nm) { tm.textContent = 'Введите название.'; return; } if (!sd || !ed || ed < sd) { tm.textContent = 'Проверьте даты: конец не раньше начала.'; return; }
+      tm.textContent = 'Подождите…';
+      return freshToken().then(function (t) { return sbFetch('/rest/v1/tournaments', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: { group_id: d.id, name: nm, metric: $('#tMetric').value, start_date: sd, end_date: ed, prize: ($('#tPrize').value || '').trim(), created_by: auth.user.id } }, t); })
+        .then(function () { ui.tForm = null; grp.list = null; return grpLoad(); }).catch(function (e) { tm.textContent = ruErr(e); });
+    }
+    if (a === 'tour-del') { ui.confirm = 'tdel:' + d.id; return render(); }
+    if (a === 'tour-del-ok') { ui.confirm = null; return freshToken().then(function (t) { return sbFetch('/rest/v1/tournaments?id=eq.' + d.id, { method: 'DELETE' }, t); }).then(function () { grp.list = null; return grpLoad(); }).catch(function (e) { grp.err = ruErr(e); render(); }); }
+    if (a === 'grp-reload') { grp.list = null; return grpLoad(); }
+    if (a === 'lb-m') { ui.lbMetric = d.m; return render(); }
+    if (a === 'grp-new' || a === 'grp-join') {
+      if (!myName()) return gMsg('Сначала сохраните своё имя выше.');
+      var inp = $(a === 'grp-new' ? '#gNew' : '#gCode'), v = (inp.value || '').trim(); if (!v) return gMsg(a === 'grp-new' ? 'Введите название группы.' : 'Введите код.');
+      gMsg('Подождите…');
+      return grpRpc(a === 'grp-new' ? 'create_group' : 'join_group', a === 'grp-new' ? { gname: v } : { gcode: v }).then(function () { ui.gMsg = ''; grp.list = null; return grpLoad(); })
+        .catch(function (e) { gMsg(/relation|function|schema|404/i.test(String(e.message)) || e.status === 404 ? 'Группы ещё не настроены в Supabase (нужен SQL из supabase-groups.sql).' : /не найдена/i.test(String(e.message)) ? 'Группа с таким кодом не найдена.' : ruErr(e)); });
+    }
+    if (a === 'grp-leave') { ui.confirm = 'leave:' + d.id; return render(); }
+    if (a === 'grp-leave-ok') { ui.confirm = null; return freshToken().then(function (t) { return sbFetch('/rest/v1/group_members?group_id=eq.' + d.id + '&user_id=eq.' + auth.user.id, { method: 'DELETE' }, t); }).then(function () { grp.list = null; return grpLoad(); }).catch(function (e) { grp.err = ruErr(e); render(); }); }
+    if (a === 'grp-share') {
+      var txt = 'Вступай в мою группу «' + d.name + '» в приложении Журнал тренировок. Код: ' + d.code + '\n' + location.href.split('#')[0];
+      if (navigator.share) { navigator.share({ text: txt }).catch(function () {}); return; }
+      try { navigator.clipboard.writeText(txt).then(function () { toast('Приглашение скопировано'); }); } catch (x) { toast('Код: ' + d.code); }
+    }
+  }
+
+  /* ---------- экспорт и «для ИИ» ---------- */
+  function aiText() {
+    var L = [], g = state.goal, gp = goalProg(g), b = bodyList(), P = state.program;
+    L.push('Ты опытный тренер по силовым тренировкам. Ниже мой журнал тренировок. Проанализируй прогресс, найди застои и слабые места, предложи, что изменить в программе, весах и отдыхе. Отвечай по-русски, коротко и по пунктам.');
+    L.push('');
+    L.push('ЦЕЛЬ: ' + (g ? g.title + (g.target ? ' ' + g.target : '') + (gp ? ' (' + gp.txt + ')' : '') : (P && P.goal) || 'не задана'));
+    if (P && P.weight) L.push('ПРОГРАММА: ' + P.name + ', ' + P.weight + ' → ' + P.target + ' кг за ' + P.weeks + ' нед.');
+    if (b.length) L.push('ВЕС ТЕЛА: ' + b.slice(-10).map(function (x) { return dFmt(x.d, { day: 'numeric', month: 'numeric' }) + ' ' + fmt(x.kg); }).join('; '));
+    L.push('', 'ПРАВИЛА: разминочный подход (р) входит в общее число подходов, вес гантелей указан на одну гантель, в односторонних упражнениях повторы на сторону. Вес растёт, когда все рабочие подходы закрыты на верхней границе повторов.');
+    L.push('', 'ТРЕНИРОВОЧНЫЕ ДНИ:');
+    state.routines.forEach(function (r) { L.push(r.name + ': ' + r.ex.map(function (id) { var e = exById(id); return e ? e.name : ''; }).filter(Boolean).join(', ')); });
+    L.push('', 'ТЕКУЩИЕ ЦЕЛЕВЫЕ ВЕСА:');
+    state.exercises.forEach(function (e) { try { var t = targetFor(e, state.sessions); if (t) L.push(e.name + ': ' + (e.kind === 'bw' ? '' : fmt(t.top) + ' кг × ') + t.r + ' (диапазон ' + e.lo + '–' + e.hi + ')'); } catch (x) {} });
+    var last = state.sessions.slice(-10);
+    L.push('', 'ПОСЛЕДНИЕ ТРЕНИРОВКИ (' + last.length + ', формат вес×повторы):');
+    last.forEach(function (s) {
+      L.push(dFmt(s.start, { day: 'numeric', month: 'numeric' }) + ' ' + s.name + ', ' + Math.round((s.end - s.start) / 60000) + ' мин, объём ' + volTxt(sessVol(s)));
+      s.entries.forEach(function (en) { L.push('  ' + en.name + ': ' + en.sets.map(function (x) { return (en.kind === 'bw' ? '' : fmt(x.w) + '×') + x.r + (x.warm ? 'р' : ''); }).join(', ')); });
+    });
+    L.push('', 'ВОПРОСЫ: 1) Где я прогрессирую медленнее всего? 2) Что поменять в ближайшие 2 недели? 3) Достаточно ли объёма и отдыха для моей цели?');
+    return L.join('\n');
+  }
+  function copyText(txt, ok) {
+    var done = function () { toast(ok); }, fb = function () { ui.copyBox = txt; render(); toast('Выделите текст и скопируйте'); };
+    try { navigator.clipboard.writeText(txt).then(done, fb); } catch (x) { fb(); }
+  }
+  function exportFile() {
+    var name = 'workout-log-' + new Date().toISOString().slice(0, 10) + '.json', blob = new Blob([JSON.stringify(state)], { type: 'application/json' });
+    try { var f = new File([blob], name, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [f] })) { navigator.share({ files: [f] }).catch(function () {}); return; } } catch (e) {}
+    var u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); toast('Файл сохранён');
+  }
+  function backupExtraHTML() {
+    var cb = ui.copyBox ? '<div class="field"><label for="cpBox">Скопируйте этот текст</label><textarea id="cpBox" rows="6" readonly>' + esc(ui.copyBox) + '</textarea></div>' : '';
+    var rs = ui.restoreObj ? '<div class="card"><h3>Заменить данные из файла?</h3><p>В файле тренировок: ' + (ui.restoreObj.sessions || []).length + '. Текущие данные на этом устройстве будут заменены.</p><div class="row"><button class="btn danger solid" data-act="restore-ok">Заменить</button><button class="btn" data-act="restore-no">Отмена</button></div></div>' : '';
+    return '<div class="row"><button class="btn small" data-act="ai-copy">Скопировать для ИИ</button><button class="btn small" data-act="export-file">Скачать файлом</button><label class="btn small" style="display:inline-flex;align-items:center">Из файла<input type="file" id="bkFile" accept=".json,application/json" hidden></label></div>' + cb + rs;
+  }
 
   /* ---------- банк упражнений ---------- */
   // [id, название, группа, повторы от, до, шаг, тип нагрузки, как указан вес, на сторону, техника]
@@ -1145,7 +1362,7 @@ details > summary::-webkit-details-marker { display: none; }
       '<div class="field"><label for="s-bar">Вес грифа, кг</label><input id="s-bar" type="number" min="0" step="0.5" inputmode="decimal" data-set="bar" value="' + state.settings.bar + '"></div></div></div>' +
       '<h2>Резервная копия</h2><div class="card"><p class="hint">Данные хранятся в этом браузере и, если страница открыта в аккаунте, дублируются в нём. Копию можно сохранить текстом.</p>' +
       '<details id="bk"><summary class="btn small" style="display:inline-flex;align-items:center">Показать данные</summary><div class="stack" style="margin-top:10px"><textarea id="bkText" readonly>' + esc(JSON.stringify(state)) + '</textarea></div></details>' +
-      '<div class="row"><button class="btn small" data-act="copy">Скопировать данные</button></div>' +
+      '<div class="row"><button class="btn small" data-act="copy">Скопировать данные</button></div>' + backupExtraHTML() +
       (ui.confirm === 'clearhist' ? '<div class="row"><button class="btn danger solid small" data-act="hist-clear-ok">Да, удалить всю историю</button><button class="btn small" data-act="confirm-no">Отмена</button></div>' : '<button class="btn danger small" data-act="hist-clear" style="align-self:flex-start">Очистить историю тренировок</button>') + '<div class="field"><label for="imp">Восстановить из копии</label><textarea id="imp" placeholder="Вставь сюда скопированные данные"></textarea></div><button class="btn small" data-act="import" style="align-self:flex-start">Восстановить</button></div>';
   }
 
@@ -1296,6 +1513,7 @@ details > summary::-webkit-details-marker { display: none; }
       if (!h) h = state.active ? activeHTML() : startHTML();
     } else if (ui.tab === 'history') h = historyHTML();
     else if (ui.tab === 'progress') h = progressHTML();
+    else if (ui.tab === 'group') h = groupHTML();
     else h = manageHTML();
     $('#app').innerHTML = h;
     document.querySelectorAll('#nav button').forEach(function (b) { b.setAttribute('aria-current', String(b.dataset.tab === ui.tab)); });
@@ -1400,6 +1618,11 @@ details > summary::-webkit-details-marker { display: none; }
       case 'body-add': var bk = $('#bodyKg'), kv = parseFloat(bk && bk.value.replace(',', '.')); if (!(kv >= 20 && kv <= 400)) return toast('Введите вес от 20 до 400 кг');
         state.body = state.body || []; state.body.push({ d: Date.now(), kg: Math.round(kv * 10) / 10 }); save(); render(); return toast('Вес записан');
       case 'body-del': state.body = (state.body || []).filter(function (x) { return String(x.d) !== d.d; }); save(); return render();
+      case 'ai-copy': return copyText(aiText(), 'Скопировано. Вставьте в чат с ИИ');
+      case 'export-file': return exportFile();
+      case 'restore-ok': if (state.active) { ui.restoreObj = null; toast('Сначала завершите тренировку'); return render(); } state = migrate(ui.restoreObj); ui.restoreObj = null; ui.open = {}; save(); toast('Данные восстановлены'); return render();
+      case 'restore-no': ui.restoreObj = null; return render();
+      case 'priv-hide': case 'priv-del': case 'priv-del-ok': case 'tour-new': case 'tour-cancel': case 'tour-save': case 'tour-del': case 'tour-del-ok': case 'pname-save': case 'grp-reload': case 'lb-m': case 'grp-new': case 'grp-join': case 'grp-leave': case 'grp-leave-ok': case 'grp-share': return grpAct(a, d);
       case 'bank-open': ui.bankOpen0 = true; return render();
       case 'bank-close': ui.bankOpen0 = false; ui.bankOpen = null; return render();
       case 'bank-g': ui.bankG = d.g; return render();
@@ -1480,6 +1703,10 @@ details > summary::-webkit-details-marker { display: none; }
   document.addEventListener('change', function (e) {
     var t = e.target, k, v;
     if (t.id === 'progEx') { ui.progEx = t.value; return render(); }
+    if (t.id === 'bkFile') {
+      var bf = t.files && t.files[0]; if (!bf) return; if (bf.size > 8000000) return toast('Файл слишком большой');
+      var br = new FileReader(); br.onload = function () { try { var o = JSON.parse(String(br.result)); if (!o || !Array.isArray(o.exercises) || !Array.isArray(o.sessions) || !Array.isArray(o.routines)) throw 0; o.settings = o.settings || { rest: 90, bar: 20 }; ui.restoreObj = o; render(); } catch (x) { toast('Не удалось прочитать файл'); } }; br.readAsText(bf); return;
+    }
     if (t.id === 'progFile') {
       var f = t.files && t.files[0]; if (!f) return;
       if (f.size > 1500000) return toast('Файл слишком большой');
@@ -1522,11 +1749,13 @@ details > summary::-webkit-details-marker { display: none; }
   var rz = null;
   window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { if (ui.tab === 'progress') render(); }, 250); });
 
+  if (/[?&]test=1/.test(location.search)) window.__wl = { get state() { return state; }, set state(v) { state = v; }, mergeStates: mergeStates, goalProg: goalProg, statsOf: statsOf, xpOf: xpOf, lvlInfo: lvlInfo, weekStreak: weekStreak, tourScore: tourScore, targetFor: targetFor, evalSets: evalSets, render: render, save: save, aiText: aiText, migrate: migrate };
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) { navigator.serviceWorker.register('sw.js').catch(function () {}); }
   openFirst();
   if (migrated) save();
   render();
   initDb();
+  if (!CLOUD) { var ng = $('#navGroup'); if (ng) ng.hidden = true; }
   if (CLOUD && auth) cloudSync();
 })();
 </script>
