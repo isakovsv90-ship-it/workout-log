@@ -119,6 +119,15 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 .chip.warn { background: var(--warn-soft); color: var(--warn); }
 .chip.bad { background: var(--bad-soft); color: var(--bad); }
 .chip.acc { background: var(--accent-soft); color: var(--accent); }
+.bar { height: 10px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 999px; background: var(--btn-bg); }
+:root[data-skin="volt"] .bar { border: 2px solid #0A0A0A; border-radius: 3px; } :root[data-skin="volt"] .bar i { background: #DDFF3C; border-right: 2px solid #0A0A0A; border-radius: 0; }
+.spark { width: 100%; height: 56px; }
+.badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.bdg { display: flex; flex-direction: column; gap: 2px; padding: 10px; border-radius: var(--r-sm); background: var(--surface-2); opacity: 0.55; min-width: 0; }
+.bdg.on { opacity: 1; background: var(--accent-soft); }
+.bdg b { font-size: 20px; color: var(--accent); } .bdg span { font-weight: 600; font-size: 13px; overflow-wrap: anywhere; } .bdg small { font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
+:root[data-skin="volt"] .bdg { border: 2px solid #0A0A0A; border-radius: 4px; } :root[data-skin="volt"] .bdg b { color: #0A0A0A; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .target { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .target .big { font-family: var(--font-display); font-weight: 700; font-size: 24px; color: var(--accent); }
@@ -400,14 +409,15 @@ details > summary::-webkit-details-marker { display: none; }
     });
     o.sessions.sort(function (a, b) { return a.start - b.start; });
   }
-  function defaults() { var o = program(); ensureImport(o); return o; }
+  function defaults() { var o = program(); o.body = []; o.goal = null; ensureImport(o); return o; }
   var migrated = false;
   function migrate(o) {
-    if (!o || o.v === 2) return o;
+    if (!o) return o;
+    if (o.v === 2) { o.body = o.body || []; if (o.goal === undefined) o.goal = null; return o; }
     var n = program();
     n.sessions = (o.sessions || []).filter(function (s) { return !s.demo; });
     n.settings = Object.assign(n.settings, o.settings || {});
-    ensureImport(n); n.updatedAt = Date.now(); migrated = true; return n;
+    n.body = o.body || []; n.goal = o.goal || null; ensureImport(n); n.updatedAt = Date.now(); migrated = true; return n;
   }
 
   /* ---------- хранение ---------- */
@@ -518,6 +528,7 @@ details > summary::-webkit-details-marker { display: none; }
     out.sessions.forEach(function (s) { ids[s.id] = 1; });
     (older.sessions || []).forEach(function (s) { if (!ids[s.id]) out.sessions.push(s); });
     out.sessions.sort(function (x, y) { return x.start - y.start; });
+    var bd = {}; (out.body || []).forEach(function (x) { bd[x.d] = 1; }); out.body = out.body || []; (older.body || []).forEach(function (x) { if (!bd[x.d]) out.body.push(x); });
     out.updatedAt = Date.now(); return out;
   }
   function adopt(remote) {
@@ -608,6 +619,91 @@ details > summary::-webkit-details-marker { display: none; }
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') cloudSync(); });
   window.addEventListener('online', function () { cloudSync(); });
 
+
+  /* ---------- цель, вес тела, уровни и значки ---------- */
+  var PRESETS = {
+    gain: { name: 'Набрать вес', title: 'Набрать вес до', unit: 'кг', hint: 'Следит за весом тела' },
+    loss: { name: 'Сбросить вес', title: 'Снизить вес до', unit: 'кг', hint: 'Следит за весом тела' },
+    sessions: { name: 'Регулярность', title: 'Тренировок в месяц', unit: 'шт.', hint: 'Считает тренировки в этом месяце' },
+    streak: { name: 'Серия недель', title: 'Недель подряд с тренировкой', unit: 'нед.', hint: 'Минимум одна тренировка в неделю' },
+    lift: { name: 'Рабочий вес', title: 'Рабочий вес в упражнении', unit: 'кг', hint: 'Лучший выполненный вес из истории' },
+    custom: { name: 'Своя цель', title: 'Моя цель', unit: '%', hint: 'Прогресс отмечаете сами' }
+  };
+  function bodyList() { return (state.body || []).slice().sort(function (a, b) { return a.d - b.d; }); }
+  function bestLift(exId) {
+    var m = 0; state.sessions.forEach(function (s) { s.entries.forEach(function (en) { if (en.ex === exId) en.sets.forEach(function (x) { if (!x.warm && x.w > m) m = x.w; }); }); }); return m;
+  }
+  function weekStreak() {
+    var wk = {}; state.sessions.forEach(function (s) { wk[weekStart(s.start)] = 1; });
+    var d = new Date(weekStart(Date.now())), n = 0;
+    if (!wk[d.getTime()]) d.setDate(d.getDate() - 7);
+    while (wk[d.getTime()]) { n++; d.setDate(d.getDate() - 7); d = new Date(weekStart(d.getTime())); }
+    return n;
+  }
+  function xpOf(s) { var sets = sum(s.entries.map(function (en) { return en.sets.filter(function (x) { return !x.warm; }).length; })); return Math.round(50 + 4 * sets + sessVol(s) / 250); }
+  function lvlInfo(xp) { var L = 1, need = 200; while (xp >= need) { xp -= need; L++; need += 100; } return { L: L, cur: xp, need: need }; }
+  function lvlName(L) { return L < 3 ? 'Новичок' : L < 6 ? 'Любитель' : L < 10 ? 'Атлет' : L < 15 ? 'Профи' : 'Мастер'; }
+  function goalProg(g) {
+    if (!g) return null; var t = +g.target || 0, cur = 0, st = +g.start || 0, txt = '', pct = 0, b = bodyList(), last = b.length ? b[b.length - 1].kg : null;
+    if (g.type === 'gain' || g.type === 'loss') {
+      if (last == null) return { pct: 0, txt: 'Запишите вес тела, чтобы видеть прогресс' };
+      if (!st) st = b[0].kg; cur = last; var span = t - st; pct = span ? (cur - st) / span : (cur === t ? 1 : 0);
+      txt = fmt(cur) + ' кг сейчас · старт ' + fmt(st) + ' · цель ' + fmt(t);
+    } else if (g.type === 'sessions') {
+      var m0 = new Date(); m0.setDate(1); m0.setHours(0, 0, 0, 0); cur = state.sessions.filter(function (s) { return s.start >= m0.getTime(); }).length; pct = t ? cur / t : 0; txt = cur + ' из ' + t + ' в этом месяце';
+    } else if (g.type === 'streak') { cur = weekStreak(); pct = t ? cur / t : 0; txt = cur + ' из ' + t + ' ' + plural(t, ['недели', 'недель', 'недель']); }
+    else if (g.type === 'lift') { cur = bestLift(g.ex); var ex = exById(g.ex); pct = t > st ? (cur - st) / (t - st) : (cur >= t ? 1 : 0); txt = (ex ? ex.name + ': ' : '') + fmt(cur) + ' кг · цель ' + fmt(t); }
+    else { pct = (+g.pct || 0) / 100; txt = Math.round(pct * 100) + '%'; }
+    pct = Math.max(0, Math.min(1, pct || 0)); return { pct: pct, txt: txt };
+  }
+  function badgeCtx() {
+    var vol = sum(state.sessions.map(sessVol)), prs = sum(state.sessions.map(function (s) { return analyze(s).prs; })), gp = goalProg(state.goal);
+    return { n: state.sessions.length, vol: vol, prs: prs, streak: weekStreak(), body: (state.body || []).length, goal: !!(gp && gp.pct >= 1) };
+  }
+  var BADGES = [
+    ['first', 'Первый шаг', 'Первая тренировка', function (c) { return c.n >= 1; }],
+    ['n10', 'В ритме', '10 тренировок', function (c) { return c.n >= 10; }],
+    ['n25', 'Привычка', '25 тренировок', function (c) { return c.n >= 25; }],
+    ['n50', 'Ветеран', '50 тренировок', function (c) { return c.n >= 50; }],
+    ['s3', 'Серия 3', '3 недели подряд', function (c) { return c.streak >= 3; }],
+    ['s8', 'Серия 8', '8 недель подряд', function (c) { return c.streak >= 8; }],
+    ['pr', 'Рекордсмен', 'Первый личный рекорд', function (c) { return c.prs >= 1; }],
+    ['v10', 'Тонна', '10 т общего объёма', function (c) { return c.vol >= 10000; }],
+    ['v100', 'Сто тонн', '100 т общего объёма', function (c) { return c.vol >= 100000; }],
+    ['body', 'На весах', '5 записей веса тела', function (c) { return c.body >= 5; }],
+    ['goal', 'Цель достигнута', 'Главная цель выполнена', function (c) { return c.goal; }]
+  ];
+  function bar(p) { return '<div class="bar"><i style="width:' + Math.round(p * 100) + '%"></i></div>'; }
+  function spark(pts) {
+    if (pts.length < 2) return ''; var W = 300, H = 56, mn = Math.min.apply(null, pts), mx = Math.max.apply(null, pts), r = mx - mn || 1;
+    var d = pts.map(function (v, i) { return (i ? 'L' : 'M') + (i * W / (pts.length - 1)).toFixed(1) + ' ' + (H - 6 - (v - mn) / r * (H - 12)).toFixed(1); }).join(' ');
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" class="spark" role="img" aria-label="График веса тела"><path d="' + d + '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  function goalFormHTML() {
+    var f = ui.gForm, P = PRESETS[f.type], P0 = state.program;
+    var picks = Object.keys(PRESETS).map(function (k) { return '<button class="chipb" data-act="goal-pick" data-t="' + k + '" aria-pressed="' + (k === f.type) + '">' + PRESETS[k].name + '</button>'; }).join('');
+    var ex = f.type === 'lift' ? '<div class="field"><label for="gEx">Упражнение</label><select id="gEx">' + state.exercises.filter(function (e) { return e.kind !== 'bw'; }).map(function (e) { return '<option value="' + e.id + '"' + (e.id === f.ex ? ' selected' : '') + '>' + esc(e.name) + '</option>'; }).join('') + '</select></div>' : '';
+    var tgt = f.type === 'custom' ? '<div class="field"><label for="gPct">Прогресс, %</label><input id="gPct" type="number" min="0" max="100" inputmode="numeric" value="' + (f.pct || 0) + '"></div>' :
+      '<div class="field"><label for="gTarget">Цель, ' + P.unit + '</label><input id="gTarget" type="number" step="0.5" min="0" inputmode="decimal" value="' + (f.target == null ? '' : f.target) + '"></div>';
+    return '<div class="card"><h3>Главная цель</h3><div class="chips">' + picks + '</div><p class="hint">' + P.hint + '</p>' +
+      '<div class="field"><label for="gTitle">Название цели</label><input id="gTitle" type="text" value="' + esc(f.title || P.title) + '"></div>' + ex + tgt +
+      '<div class="row"><button class="btn primary" data-act="goal-save">Сохранить</button><button class="btn" data-act="goal-cancel">Отмена</button></div></div>';
+  }
+  function meHTML() {
+    var xp = sum(state.sessions.map(xpOf)), L = lvlInfo(xp), st = weekStreak(), g = state.goal, gp = goalProg(g), b = bodyList(), P = state.program;
+    var lvl = '<div class="card"><div class="row" style="flex-wrap:nowrap"><div class="stack" style="gap:0;min-width:0"><span class="eyebrow">Уровень ' + L.L + '</span><h3>' + lvlName(L.L) + '</h3></div><div class="stack" style="gap:0;text-align:right"><b>' + st + ' ' + plural(st, ['неделя', 'недели', 'недель']) + '</b><span class="hint">серия</span></div></div>' + bar(L.cur / L.need) + '<span class="hint">Опыт: ' + L.cur + ' из ' + L.need + ' до следующего уровня. Всего ' + xp + '.</span></div>';
+    var goal;
+    if (ui.gForm) goal = goalFormHTML();
+    else if (g) goal = '<div class="card"><div class="row"><span class="eyebrow">Главная цель</span>' + (gp.pct >= 1 ? '<span class="chip good">Достигнута</span>' : '') + '</div><h3>' + esc(g.title) + (g.type === 'custom' ? '' : ': ' + fmt(g.target) + ' ' + PRESETS[g.type].unit) + '</h3>' + bar(gp.pct) + '<span class="hint">' + esc(gp.txt) + '</span><div class="row"><button class="btn small" data-act="goal-edit">Изменить</button><button class="btn small danger" data-act="goal-clear">Убрать</button></div></div>';
+    else goal = '<div class="card"><h3>Главная цель</h3><p class="hint">Выберите цель, и приложение покажет, как вы к ней идёте.</p><button class="btn primary" data-act="goal-edit">Выбрать цель</button>' + (P && P.target ? '<button class="btn" data-act="goal-prog">Взять из программы: ' + fmt(P.weight) + ' → ' + fmt(P.target) + ' кг</button>' : '') + '</div>';
+    var rows = b.slice(-5).reverse().map(function (x) { return '<div class="row" style="flex-wrap:nowrap;justify-content:space-between"><span>' + dFmt(x.d, { day: 'numeric', month: 'short' }) + '</span><b>' + fmt(x.kg) + ' кг</b><button class="ico" data-act="body-del" data-d="' + x.d + '" aria-label="Удалить запись">×</button></div>'; }).join('');
+    var body = '<div class="card"><div class="row"><h3>Вес тела</h3>' + (b.length ? '<b>' + fmt(b[b.length - 1].kg) + ' кг</b>' : '') + '</div>' + spark(b.slice(-30).map(function (x) { return x.kg; })) +
+      '<div class="row" style="flex-wrap:nowrap;align-items:flex-end"><div class="field" style="flex:1"><label for="bodyKg">Сегодня, кг</label><input id="bodyKg" type="number" step="0.1" min="20" max="400" inputmode="decimal"></div><button class="btn primary" data-act="body-add">Записать</button></div>' + rows + '</div>';
+    var c = badgeCtx(), earned = BADGES.filter(function (x) { return x[3](c); }).length;
+    var bd = '<div class="card"><div class="row"><h3>Значки</h3><span class="hint">' + earned + ' из ' + BADGES.length + '</span></div><div class="badges">' + BADGES.map(function (x) { var on = x[3](c); return '<div class="bdg' + (on ? ' on' : '') + '"><b>' + (on ? '★' : '☆') + '</b><span>' + x[1] + '</span><small>' + x[2] + '</small></div>'; }).join('') + '</div></div>';
+    return lvl + goal + body + bd;
+  }
+  function progressHTML() { var h = progressCore(); var i = h.indexOf('</h1>'); return i < 0 ? h : h.slice(0, i + 5) + meHTML() + h.slice(i + 5); }
 
   /* ---------- банк упражнений ---------- */
   // [id, название, группа, повторы от, до, шаг, тип нагрузки, как указан вес, на сторону, техника]
@@ -964,7 +1060,7 @@ details > summary::-webkit-details-marker { display: none; }
     });
     return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Объём по неделям"><g class="axis">' + out + '</g></svg>';
   }
-  function progressHTML() {
+  function progressCore() {
     if (!state.sessions.length) return '<h1>Прогресс</h1><div class="empty"><p>Графики и рекорды появятся после первой завершённой тренировки.</p></div>';
     var W = Math.max(260, Math.min(window.innerWidth, 720) - 32 - 30);
     var withHist = state.exercises.filter(function (e) { return histFor(e.id, state.sessions).length; });
@@ -1288,6 +1384,22 @@ details > summary::-webkit-details-marker { display: none; }
       case 'sc-merge': state = mergeStates(state, ui.syncChoice); persistLocal(); ui.syncChoice = null; cloudDirty = true; render(); return cloudPush().then(function () { render(); }).catch(function () { setSync('err'); });
       case 'sc-cloud': return adopt(ui.syncChoice);
       case 'sc-phone': ui.syncChoice = null; state.updatedAt = Date.now(); persistLocal(); cloudDirty = true; render(); return cloudPush().then(function () { render(); }).catch(function () { setSync('err'); });
+      case 'goal-edit': var g0 = state.goal; ui.gForm = g0 ? { type: g0.type, title: g0.title, target: g0.target, ex: g0.ex, pct: g0.pct, start: g0.start } : { type: 'gain', title: PRESETS.gain.title, target: '' }; return render();
+      case 'goal-pick': var ex0 = state.exercises.filter(function (e) { return e.kind !== 'bw'; })[0]; ui.gForm = { type: d.t, title: PRESETS[d.t].title, target: '', ex: ex0 && ex0.id, pct: 0 }; return render();
+      case 'goal-cancel': ui.gForm = null; return render();
+      case 'goal-clear': state.goal = null; save(); return render();
+      case 'goal-prog': state.goal = { type: 'gain', title: PRESETS.gain.title, target: state.program.target, start: state.program.weight, created: Date.now() }; save(); return render();
+      case 'goal-save':
+        var f = ui.gForm, tt = $('#gTitle'), tg = $('#gTarget'), gx = $('#gEx'), gpc = $('#gPct'), nt = {};
+        nt.type = f.type; nt.title = (tt && tt.value.trim()) || PRESETS[f.type].title; nt.created = Date.now();
+        if (f.type === 'custom') nt.pct = Math.max(0, Math.min(100, parseFloat(gpc && gpc.value) || 0));
+        else { nt.target = parseFloat(tg && tg.value); if (!(nt.target > 0)) return toast('Укажите цель числом'); }
+        if (f.type === 'lift') { nt.ex = gx && gx.value; nt.start = bestLift(nt.ex); }
+        if ((f.type === 'gain' || f.type === 'loss') && bodyList().length) nt.start = bodyList()[bodyList().length - 1].kg;
+        state.goal = nt; ui.gForm = null; save(); return render();
+      case 'body-add': var bk = $('#bodyKg'), kv = parseFloat(bk && bk.value.replace(',', '.')); if (!(kv >= 20 && kv <= 400)) return toast('Введите вес от 20 до 400 кг');
+        state.body = state.body || []; state.body.push({ d: Date.now(), kg: Math.round(kv * 10) / 10 }); save(); render(); return toast('Вес записан');
+      case 'body-del': state.body = (state.body || []).filter(function (x) { return String(x.d) !== d.d; }); save(); return render();
       case 'bank-open': ui.bankOpen0 = true; return render();
       case 'bank-close': ui.bankOpen0 = false; ui.bankOpen = null; return render();
       case 'bank-g': ui.bankG = d.g; return render();
