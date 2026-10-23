@@ -1348,7 +1348,7 @@ details > summary::-webkit-details-marker { display: none; }
   }
   function manageHTML() {
     var P = state.program, head = '';
-    if (P) head = '<div class="card">' + (P.version ? '<div class="eyebrow">Версия ' + esc(P.version) + '</div>' : '') + '<h3>' + esc(P.name) + '</h3>' + (P.weight ? '<p>' + P.weight + ' → ' + P.target + ' кг за ' + P.weeks + ' ' + plural(P.weeks, ['неделю', 'недели', 'недель']) + '. ' + esc(P.goal || '') + '</p>' : '') +
+    if (P) head = '<div class="card">' + (P.version ? '<div class="eyebrow">Версия ' + esc(P.version) + '</div>' : '') + '<h3>' + esc(P.name) + '</h3>' +
       '<p class="hint">Правила: первый подход — разминка и входит в общее число подходов. Вес гантелей указан на каждую гантель, в односторонних упражнениях вес и повторы на одну сторону. Вес растёт, когда все рабочие подходы закрыты на верхней границе повторов с хорошей техникой.</p></div>';
     var exs = state.exercises.map(function (e) {
       if (ui.editEx === e.id) return exFormHTML(e);
