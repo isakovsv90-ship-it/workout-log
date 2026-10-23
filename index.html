@@ -274,7 +274,6 @@ details > summary::-webkit-details-marker { display: none; }
 .prog { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-display); font-weight: 600; font-size: 16px; padding: 2px 10px; border-radius: 99px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
 .prog.ok { background: var(--good-soft); color: var(--good); }
 .prog svg { width: 16px; height: 16px; }
-.card .card.sub { background: var(--surface-2); box-shadow: none; }
 .chev { width: 22px; height: 22px; color: var(--muted); display: inline-flex; transition: transform 0.15s; }
 .chev.up { transform: rotate(180deg); }
 .chev svg { width: 22px; height: 22px; }
@@ -1437,21 +1436,16 @@ details > summary::-webkit-details-marker { display: none; }
   }
   function manageHTML() {
     var P = state.program, head = '';
-    var nameF = '<div class="field"><label for="progName">Название программы</label><input id="progName" type="text" maxlength="60" data-pn="1" placeholder="Моя программа" value="' + esc(P ? P.name : '') + '"></div>';
-    if (!P) head = '<div class="card">' + nameF + '</div>';
-    else head = '<div class="card">' + (P.version ? '<div class="eyebrow">Версия ' + esc(P.version) + '</div>' : '') + nameF +
+    if (P) head = '<div class="card">' + (P.version ? '<div class="eyebrow">Версия ' + esc(P.version) + '</div>' : '') + '<h3>' + esc(P.name) + '</h3>' +
       '<p class="hint">Правила: первый подход — разминка и входит в общее число подходов. Вес гантелей указан на каждую гантель, в односторонних упражнениях вес и повторы на одну сторону. Вес растёт, когда все рабочие подходы закрыты на верхней границе повторов с хорошей техникой.</p></div>';
     var exs = state.exercises.map(function (e) {
-      if (ui.editEx === e.id) return exFormHTML(e).replace('<section class="card">', '<section class="card sub">');
+      if (ui.editEx === e.id) return exFormHTML(e);
       var t = targetFor(e, state.sessions), pt = ssPartner(e);
-      return '<div class="card sub"><div class="row" style="flex-wrap:nowrap"><div class="stack" style="gap:2px;min-width:0"><h3>' + esc(e.name) + '</h3><span class="hint">' + esc(e.group) + ' · ' + e.approaches.length + ' подх. · ' + e.lo + '–' + e.hi + (e.kind === 'bw' ? '' : ' · шаг ' + fmt(e.inc) + ' кг') + (pt ? ' · суперсет' : '') + '</span></div><button class="btn small" data-act="ex-edit" data-id="' + e.id + '">Изменить</button></div>' +
+      return '<div class="card"><div class="row" style="flex-wrap:nowrap"><div class="stack" style="gap:2px;min-width:0"><h3>' + esc(e.name) + '</h3><span class="hint">' + esc(e.group) + ' · ' + e.approaches.length + ' подх. · ' + e.lo + '–' + e.hi + (e.kind === 'bw' ? '' : ' · шаг ' + fmt(e.inc) + ' кг') + (pt ? ' · суперсет' : '') + '</span></div><button class="btn small" data-act="ex-edit" data-id="' + e.id + '">Изменить</button></div>' +
         '<div class="target"><span class="hint">' + (t.first ? 'По плану' : 'Цель') + '</span><span class="big">' + esc(tgtText(e, t)) + '</span></div></div>';
     }).join('');
-    var exOpen = !!(ui.exBox || ui.editEx);
-    var exBox = '<section class="card ex"><button class="acc" data-act="ex-box" aria-expanded="' + exOpen + '"><div class="stack" style="gap:2px;min-width:0"><h3>Мои упражнения</h3><span class="hint">' + state.exercises.length + ' ' + plural(state.exercises.length, ['упражнение', 'упражнения', 'упражнений']) + (exOpen ? '' : ', нажмите, чтобы развернуть') + '</span></div><span class="chev' + (exOpen ? ' up' : '') + '">' + CHEV + '</span></button>' +
-      (exOpen ? '<div class="stack" style="padding:0 12px 12px">' + (exs || '<p class="hint">Пока нет упражнений. Добавьте из банка или создайте своё.</p>') + '</div>' : '') + '</section>';
     return '<h1>Программа</h1>' + accountHTML() + head + (ui.wizAgain ? onboardHTML(true) : '<button class="btn wide" data-act="wiz-again">Составить программу по цели</button>') + importHTML() + '<h2>Тренировочные дни</h2>' + state.routines.map(routineHTML).join('') + '<button class="btn" data-act="rt-new">+ Новый день</button>' +
-      (ui.bankOpen0 ? bankHTML() : '<button class="btn primary wide" data-act="bank-open">Банк упражнений (' + BANK.length + ')</button>') + exBox + '<button class="btn" data-act="ex-new">+ Новое упражнение</button>' +
+      (ui.bankOpen0 ? bankHTML() : '<button class="btn primary wide" data-act="bank-open">Банк упражнений (' + BANK.length + ')</button>') + '<h2>Упражнения</h2>' + exs + '<button class="btn" data-act="ex-new">+ Новое упражнение</button>' +
       '<h2>Настройки</h2><div class="card"><div class="grid2"><div class="field"><label for="s-rest">Отдых между подходами, сек</label><input id="s-rest" type="number" min="0" step="15" inputmode="numeric" data-set="rest" value="' + state.settings.rest + '"></div>' +
       '<div class="field"><label for="s-bar">Вес грифа, кг</label><input id="s-bar" type="number" min="0" step="0.5" inputmode="decimal" data-set="bar" value="' + state.settings.bar + '"></div></div></div>' +
       '<h2>Резервная копия</h2><div class="card"><p class="hint">Данные хранятся в этом браузере и, если страница открыта в аккаунте, дублируются в нём. Копию можно сохранить текстом.</p>' +
@@ -1646,7 +1640,6 @@ details > summary::-webkit-details-marker { display: none; }
         state.active = { id: uid(), routine: rt ? rt.id : null, name: rt ? rt.name : 'Свободная тренировка', start: Date.now(), entries: [] };
         if (rt) rt.ex.forEach(function (id) { var x = exById(id); if (x) state.active.entries.push(mkEntry(x)); });
         ui.summaryId = null; ui.open = {}; openFirst(); save(); return render();
-      case 'ex-box': ui.exBox = !(ui.exBox || ui.editEx); if (!ui.exBox) ui.editEx = null; return render();
       case 'toggle': ui.open[d.ex] = !ui.open[d.ex]; return render();
       case 'done':
         en = ac.entries[+d.e]; s = en.sets[+d.i];
@@ -1676,7 +1669,7 @@ details > summary::-webkit-details-marker { display: none; }
       case 'hist-del-ok': state.sessions = state.sessions.filter(function (x) { return x.id !== d.id; }); ui.histOpen = null; ui.confirm = null; save(); return render();
       case 'ex-edit': ui.editEx = d.id; ui.confirm = null; return render();
       case 'ex-done': ui.editEx = null; return render();
-      case 'ex-new': var ne = D(uid(), 'Новое упражнение', 'Другое', 8, 12, 2.5, [[10, 10, 1], [20], [20], [20]]); state.exercises.push(ne); ui.editEx = ne.id; ui.exBox = true; save(); return render();
+      case 'ex-new': var ne = D(uid(), 'Новое упражнение', 'Другое', 8, 12, 2.5, [[10, 10, 1], [20], [20], [20]]); state.exercises.push(ne); ui.editEx = ne.id; save(); return render();
       case 'ex-del': ui.confirm = 'delex:' + d.id; return render();
       case 'ex-del-ok': state.exercises = state.exercises.filter(function (x) { return x.id !== d.id; }); state.routines.forEach(function (r) { r.ex = r.ex.filter(function (x) { return x !== d.id; }); }); ui.editEx = null; ui.confirm = null; save(); return render();
       case 'ap-add': e = exById(d.id); var lastA = e.approaches[e.approaches.length - 1]; e.approaches.push({ w: lastA ? lastA.w : 0, r: 0, warm: false }); save(); return render();
@@ -1832,7 +1825,6 @@ details > summary::-webkit-details-marker { display: none; }
       if (k === 'kind' && x.kind === 'bw') x.approaches.forEach(function (a) { a.w = 0; });
       x.mult = calcMult(x); save(); return render();
     }
-    if (t.dataset.pn) { state.program = state.program || { name: '', version: '', goal: '' }; state.program.name = t.value.trim() || state.program.name || 'Моя программа'; t.value = state.program.name; save(); return; }
     if (t.dataset.rtn) { var r = state.routines.find(function (q) { return q.id === t.dataset.rtn; }); if (r) { r.name = t.value.trim() || r.name; save(); render(); } return; }
     if (t.dataset.rts) { var r2 = state.routines.find(function (q) { return q.id === t.dataset.rts; }); if (r2) { r2.sub = t.value.trim(); save(); } return; }
     if (t.dataset.set) { v = parseFloat(t.value); if (!isNaN(v) && v >= 0) { state.settings[t.dataset.set] = v; save(); } else render(); }
