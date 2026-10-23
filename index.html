@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Тренировки">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#F2F3F7">
+<meta name="theme-color" content="#ECEAF8">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
@@ -21,14 +21,26 @@
    Clean: светлое, мягкие скругления, синий акцент (в духе Apple Fitness и Hevy).
    Midnight: тёмное OLED, мятный акцент (в духе Whoop и Strong).
    Volt: белое, чёрное и кислотный жёлто-зелёный, острые углы, капслок (в духе Nike Training Club). */
-:root, :root[data-skin="clean"] {
-  --bg: #F2F3F7; --surface: #FFFFFF; --surface-2: #ECEEF3; --ink: #101216; --ink-2: #3D4350; --muted: #666E7C; --line: #E1E4EA;
-  --accent: #0B5FD9; --accent-ink: #FFFFFF; --accent-soft: rgba(11, 95, 217, 0.10);
-  --good: #0F7A43; --good-soft: rgba(15, 122, 67, 0.12); --warn: #8A5200; --warn-soft: rgba(138, 82, 0, 0.13); --bad: #B3261E; --bad-soft: rgba(179, 38, 30, 0.11);
-  --r: 16px; --r-sm: 12px; --h-tt: none; --h-ls: 0.01em; --shadow: 0 1px 2px rgba(16, 18, 22, 0.06);
-  --p25: #C8372D; --p20: #2456C9; --p15: #E2B714; --p10: #2E9A5B; --p5: #F2F2F2; --p2: #2B3036; --p1: #9AA3AD;
+/* общие токены оформления: у Midnight остаются плоскими, остальные темы их переопределяют */
+:root {
+  --bg-img: none; --btn-bg: var(--accent); --btn-sh: none; --card-sh: var(--shadow); --card-bd: var(--line); --card-bw: 1px;
+  --nav-bg: var(--surface); --nav-bd: var(--line); --nav-ink: var(--muted); --nav-on: var(--accent); --nav-on-bg: var(--accent-soft);
+  --ex-ring: none; --p25: #C8372D; --p20: #2456C9; --p15: #E2B714; --p10: #2E9A5B; --p5: #F2F2F2; --p2: #2B3036; --p1: #9AA3AD;
   --font-display: "Fira Sans Condensed", "Arial Narrow", system-ui, sans-serif;
   --font-body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --brand-c: var(--ink); --clock-c: var(--accent); --chip-bd: transparent;
+}
+:root[data-skin="clean"] {
+  --bg: #ECEAF8; --surface: #FFFFFF; --surface-2: #EEEDF9; --ink: #15122B; --ink-2: #413D5C; --muted: #6A6685; --line: #E4E2F1;
+  --accent: #5B45F0; --accent-ink: #FFFFFF; --accent-soft: rgba(91, 69, 240, 0.10);
+  --good: #0E7C4A; --good-soft: rgba(14, 124, 74, 0.12); --warn: #8A5200; --warn-soft: rgba(138, 82, 0, 0.13); --bad: #B3261E; --bad-soft: rgba(179, 38, 30, 0.11);
+  --r: 20px; --r-sm: 14px; --h-tt: none; --h-ls: 0; --shadow: 0 1px 2px rgba(40, 30, 110, 0.05), 0 8px 24px rgba(40, 30, 110, 0.07);
+  --bg-img: radial-gradient(900px 420px at 100% -80px, rgba(139, 92, 246, 0.26), transparent 60%), radial-gradient(700px 380px at -10% 0, rgba(56, 189, 248, 0.22), transparent 60%);
+  --btn-bg: linear-gradient(135deg, #5B45F0 0%, #8B5CF6 100%); --btn-sh: 0 6px 16px rgba(91, 69, 240, 0.32);
+  --card-bd: rgba(91, 69, 240, 0.10); --nav-bg: rgba(255, 255, 255, 0.82); --nav-bd: rgba(91, 69, 240, 0.10);
+  --ex-ring: 0 0 0 2px rgba(91, 69, 240, 0.45), 0 10px 28px rgba(91, 69, 240, 0.16);
+  --brand-c: #5B45F0; --clock-c: #5B45F0;
+  --p25: #D9442F; --p20: #5B45F0; --p15: #E8A317; --p10: #17A05F; --p5: #F2F2F2; --p2: #2B2840; --p1: #9A97B3;
   color-scheme: light;
 }
 :root[data-skin="midnight"] {
@@ -39,16 +51,19 @@
   color-scheme: dark;
 }
 :root[data-skin="volt"] {
-  --bg: #FFFFFF; --surface: #F3F3EF; --surface-2: #E6E6DF; --ink: #0A0A0A; --ink-2: #2E2E2B; --muted: #5C5C57; --line: #CFCFC7;
+  --bg: #F7F7F1; --surface: #FFFFFF; --surface-2: #EDEDE4; --ink: #0A0A0A; --ink-2: #2E2E2B; --muted: #585853; --line: #0A0A0A;
   --accent: #0A0A0A; --accent-ink: #DDFF3C; --accent-soft: #DDFF3C;
   --good: #0B7A3E; --good-soft: rgba(11, 122, 62, 0.14); --warn: #8A5200; --warn-soft: rgba(138, 82, 0, 0.15); --bad: #B3261E; --bad-soft: rgba(179, 38, 30, 0.12);
-  --r: 4px; --r-sm: 3px; --h-tt: uppercase; --h-ls: 0.03em; --shadow: none;
+  --r: 6px; --r-sm: 4px; --h-tt: uppercase; --h-ls: 0.03em; --shadow: 4px 4px 0 #0A0A0A;
+  --card-bw: 2px; --card-bd: #0A0A0A; --btn-sh: 3px 3px 0 #DDFF3C; --chip-bd: #0A0A0A;
+  --nav-bg: #0A0A0A; --nav-bd: #0A0A0A; --nav-ink: #A6A69E; --nav-on: #0A0A0A; --nav-on-bg: #DDFF3C;
+  --ex-ring: 6px 6px 0 #DDFF3C, 6px 6px 0 2px #0A0A0A; --brand-c: #0A0A0A; --clock-c: #0A0A0A;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
-  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  background-color: var(--bg); background-image: var(--bg-img); background-repeat: no-repeat; background-attachment: fixed; color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 12px 150px; font-variant-numeric: tabular-nums;
 }
@@ -71,32 +86,35 @@ p { margin: 0; }
 .skin span.d { font-size: 11.5px; color: var(--muted); line-height: 1.3; }
 .sw { display: flex; height: 28px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(127, 127, 127, 0.35); }
 .sw i { flex: 1; }
-.brand { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.brand img { width: 26px; height: 26px; border-radius: 7px; margin-right: 8px; vertical-align: -7px; }
+.brand { color: var(--brand-c); font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .sync { cursor: pointer; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 @media (max-width: 399px) { .sync { font-size: 0; gap: 0; } }
 .sync::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
 .sync[data-s="ok"]::before { background: var(--good); }
 .sync[data-s="err"]::before { background: var(--bad); }
 #app { display: flex; flex-direction: column; gap: 14px; }
-.card { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card { background: var(--surface); border: var(--card-bw) solid var(--card-bd); box-shadow: var(--card-sh); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; min-width: 0; }
 .stack { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
-.clock { font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1; color: var(--accent); }
+.clock { font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1; color: var(--clock-c); }
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; }
 .tile { background: var(--surface-2); border-radius: var(--r-sm); padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .tile b { font-family: var(--font-display); font-size: clamp(20px, 6.2vw, 26px); font-weight: 600; line-height: 1.05; white-space: nowrap; }
 .tile span { font-size: 12px; color: var(--muted); }
 .btn { font: inherit; font-weight: 600; min-height: 44px; padding: 0 16px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
 .btn:hover { background: var(--surface-2); }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.btn.primary:hover { filter: brightness(1.08); background: var(--accent); }
+.btn.primary { background: var(--btn-bg); color: var(--accent-ink); border-color: transparent; box-shadow: var(--btn-sh); }
+:root[data-skin="volt"] .btn.primary { border-color: #0A0A0A; }
+.btn:active { transform: translateY(1px); }
+.btn.primary:hover { filter: brightness(1.08); background: var(--btn-bg); }
 .btn.danger { color: var(--bad); border-color: var(--bad); background: transparent; }
 .btn.danger.solid { background: var(--bad); color: #fff; }
 .btn.small { min-height: 36px; padding: 0 12px; font-size: 14px; }
 .btn.wide { width: 100%; }
 button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 99px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+.chip { border: 1px solid var(--chip-bd); display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 99px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
 .chip.good { background: var(--good-soft); color: var(--good); }
 .chip.warn { background: var(--warn-soft); color: var(--warn); }
 .chip.bad { background: var(--bad-soft); color: var(--bad); }
@@ -118,6 +136,19 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 }
 .set .n { font-family: var(--font-display); font-weight: 600; color: var(--muted); font-size: 18px; text-align: center; }
 .set .n.wu { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chipb { font: inherit; font-size: 13px; font-weight: 600; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.chipb[aria-pressed="true"] { background: var(--accent-soft); color: var(--ink); border-color: var(--accent); }
+.how summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); min-height: 32px; display: flex; align-items: center; }
+.how p { margin: 4px 0 8px; font-size: 14px; color: var(--ink-2); }
+:root[data-skin="volt"] .chipb { border: 2px solid #0A0A0A; border-radius: 4px; } :root[data-skin="volt"] .chipb[aria-pressed="true"] { background: #DDFF3C; }
+.stp { display: grid; grid-template-columns: 1fr minmax(0, 1.2fr) 1fr; gap: 8px; align-items: center; padding: 6px; border-radius: var(--r-sm); background: var(--surface-2); }
+.stp button { font: 600 22px var(--font-display); min-height: 48px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; touch-action: manipulation; }
+.stp button:active { background: var(--accent-soft); }
+.stp span { text-align: center; font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.2; }
+:root[data-skin="volt"] .stp { border: 2px solid #0A0A0A; background: #DDFF3C; }
+:root[data-skin="volt"] .stp button { border: 2px solid #0A0A0A; }
+:root[data-skin="volt"] .stp span { color: #0A0A0A; }
 .fld { position: relative; min-width: 0; }
 .fld input { width: 100%; height: 48px; font: 600 22px var(--font-display); text-align: center; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: var(--r-sm); padding: 0 4px; -moz-appearance: textfield; appearance: textfield; }
 .fld input::-webkit-outer-spin-button, .fld input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -161,7 +192,7 @@ th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line
 th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 /* упражнение в тренировке */
 .ex { padding: 0; gap: 0; overflow: hidden; scroll-margin-top: 8px; }
-.ex.open { border-color: var(--accent); }
+.ex.open { border-color: var(--accent); box-shadow: var(--ex-ring); }
 .xhead { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; color: inherit; background: transparent; border: 0; padding: 12px 14px; min-height: 64px; cursor: pointer; }
 .xhead:hover { background: var(--surface-2); }
 .xhead .nm { font-family: var(--font-display); font-weight: 600; font-size: 18px; line-height: 1.2; }
@@ -190,6 +221,25 @@ body.resting { padding-block-end: 250px; }
 [hidden] { display: none !important; }
 #restbar[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
+/* тонкая доработка тем */
+:root[data-skin="volt"] .tile { border: 2px solid #0A0A0A; background: var(--surface); }
+:root[data-skin="volt"] .tile b { font-size: clamp(22px, 7vw, 30px); }
+:root[data-skin="volt"] .set.done .fld input { background: #DDFF3C; border: 2px solid #0A0A0A; color: #0A0A0A; }
+:root[data-skin="volt"] .set.done .chk { background: #DDFF3C; color: #0A0A0A; border-color: #0A0A0A; }
+:root[data-skin="volt"] .fld input, :root[data-skin="volt"] .chk, :root[data-skin="volt"] .field input, :root[data-skin="volt"] .field select, :root[data-skin="volt"] textarea, :root[data-skin="volt"] .btn { border-width: 2px; border-color: #0A0A0A; }
+:root[data-skin="volt"] .btn.danger { border-color: var(--bad); }
+:root[data-skin="volt"] .list-item { border-width: 2px; box-shadow: 3px 3px 0 #0A0A0A; }
+:root[data-skin="volt"] #nav button { text-transform: uppercase; letter-spacing: 0.03em; min-width: 0; }
+@media (max-width: 359px) { :root[data-skin="volt"] #nav button { font-size: 10px; letter-spacing: 0; } }
+:root[data-skin="volt"] .dot.on { background: #0A0A0A; }
+:root[data-skin="volt"] .target .big, :root[data-skin="volt"] .clock { background: #DDFF3C; padding: 0 6px; border-radius: 3px; color: #0A0A0A; width: fit-content; }
+:root[data-skin="clean"] h1 { background: linear-gradient(135deg, #15122B 30%, #5B45F0 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+:root[data-skin="clean"] .tile { background: linear-gradient(180deg, #F6F5FD, #EEEDF8); }
+:root[data-skin="clean"] .set.done .fld input { background: rgba(91, 69, 240, 0.12); color: #3A2BC4; }
+:root[data-skin="clean"] .set.done .chk { background: var(--btn-bg); border-color: transparent; }
+:root[data-skin="clean"] #restbar { background: linear-gradient(135deg, #1E1A4D, #3B2A9E); color: #fff; }
+:root[data-skin="volt"] #restbar { background: #0A0A0A; color: #DDFF3C; border: 2px solid #DDFF3C; }
+:root[data-skin="volt"] #restbar button { border-color: #DDFF3C; }
 /* программа */
 .drow { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
 .drow:first-of-type { border-top: 0; }
@@ -228,13 +278,13 @@ details > summary { list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
 @media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
 #nav {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line);
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--nav-bg); border-top: 1px solid var(--nav-bd); -webkit-backdrop-filter: saturate(1.6) blur(14px); backdrop-filter: saturate(1.6) blur(14px);
   padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
 }
 #nav .in { max-width: 720px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-#nav button { font: inherit; font-size: 11.5px; font-weight: 600; min-height: 52px; border: 0; background: transparent; color: var(--muted); border-radius: var(--r-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
+#nav button { font: inherit; font-size: 11.5px; font-weight: 600; min-height: 52px; border: 0; background: transparent; color: var(--nav-ink); border-radius: var(--r-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
 #nav button svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-#nav button[aria-current="true"] { color: var(--accent); background: var(--accent-soft); }
+#nav button[aria-current="true"] { color: var(--nav-on); background: var(--nav-on-bg); }
 #toast { position: fixed; left: 50%; transform: translateX(-50%); top: calc(12px + env(safe-area-inset-top, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: var(--r-sm); font-weight: 600; z-index: 30; max-width: calc(100% - 32px); opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 #toast.on { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
@@ -242,11 +292,11 @@ details > summary::-webkit-details-marker { display: none; }
 <script>try{var __k=localStorage.getItem('wl-skin');if(!__k)__k=matchMedia('(prefers-color-scheme: dark)').matches?'midnight':'clean';document.documentElement.dataset.skin=__k;}catch(e){}</script>
 
 <div class="wrap">
-  <header class="top"><div class="brand">Журнал тренировок</div><div class="top-r"><div class="sync" id="sync" data-s="local" data-act="sync-go">На устройстве</div><button class="skinbtn" id="skinBtn" aria-label="Сменить оформление" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-.6-.3-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14.5" cy="7.5" r="1"/></svg></button></div></header>
+  <header class="top"><div class="brand"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAIAAABt+uBvAAA4sElEQVR4nHV9d9xlVXX2s9Y+5/b79jLlnV5gmEJvgkRALAgaNSZYAHui0cTkw5ZYEvLFRDHGksSG0YhRAUEsxBIVpQhSZ2AYYJjeZ95ebj1nr/X9sfc+90Ly3d8w8977nnvO3muv9axnlb2h8152DhEBUCgTEZECpAq4jwGCCghQuP+gAgUDCgVACqhVIlJRFYAAsP8mCAqxCgKEVIkIqiAiKFQV6h7CqlAoKYRACoXCjUqJGGADVVX1wyNSEJgAIiIlEj9yBkGYlEiJAQIRmEQVBDArAUQgUndfdjNwo3UvhSq5sRFDNAJBoUTExACUlOBuARBU4YfqhwZVJQapqBcXkUKJVBUEMmHmIFUhYi9pRZiYEvn7KBQEVYKKEzQIADnhA2EZwFD/Szcq91mYkF85BcCkfnnIrzr5uUmQOIgBIoMwKycL/+yw6G4ZoUwRwQmEABBnv1UirzTkvkkEKIUxAW6w7h05efqL1N2BiNRJCl607kZOB92vnBK5z/wQsmu87lLXR/4K8oIkghKIBcpEMEadZvnlYCInL1VmAgNQt/Ze88gPwCtUZxhEJKpExIzIqSGxqnolcAqFMFVACV46nYuInN25ZxCBANFgWN4a/QhUvXqIuwmcjZE3GYWqMkEUFJQS5NXHLY92ROI1xc8tvERB7j1zJkyFgljd2Im0c2enjIpMOsxe7cmDhn8EKHJDdSvu56YKJ3p3tb+f+LGHZWTK7ID8s+AAwz1LVMOieB0M4IbO9IgAJigp1JlWNm4iBVi1S1Hdr7lLy4j9clKGel473Pe91rhne0h0klQHXl5zvAFksw8rrBp5NaCOFao3MXar7a0UIGZV9UqMbkjwuKxCXmRBWb2pOgtUt3aaLZGTtKpTE/aY7bCOiUAqfs2dHYt/lP9HiSWzOA897CHJTd7ZjxMic9CL8FxAmcLiKxETk4oqqRcOlFQjVWEmLz7tXm7ncoL0FKrWuQ91UO5BIgBNgOCOonaZAAXFzmaYTdsrhBIxOaVjInEuyzjsp85N/PK4xUcAAI8vYWUAVRXnTUhVvXIG/HYXqgfKbIxQzWyZvYcijYJddxz7c76U6UKAA6cXCP4cHXGQQokVQhnwMpEEv+MVSknDEzSorCqDKXg074mdrD2aetEE+ASJd0GUXeAsHMHpuL88KjILoMphpPCu2pkIiDggg5NamDVAkZOOHzIhc0Pd0vECDjARYKsDtV1iClqTrRM/V9xMDIgGF+tsxRluUAgQOw7itDgoNolbYmbxK53pTpBpGAeyISPjJ976wpOhYcVBYDaqkk0z03wCIucZkXlcCtTAKX2XC6SMNSBDvODMu+zAz1y9njo5igTuRxAnPS9hL5oA3o6cODQRZM4i0BNVkLKfMgggZhYH7VCnX122zh1m0YEPgqdXGa8QR0LdlFUtsjkAUdCbMLvu5X+uGqlCRDLO48HWk6wurfTy84LUIAqv8eyIqReHXxxiChep131S4kDuKBBFdtzJS0cdGDv08RbjqGnmgzO9DV6MNHwx0Cl4p0EE5YyQBoki0sD/O6akSn4FNdPcbsT1qtsdN0BFvNEG/gdBYEzBAJRYyX2RFMaJxkMPMXk9Ys0mpdk6Ubf9urtnDs7BjlMhj6QdgkwKqFriSAMvUSgpI+ih018iT8q8TYg4gUTZ5CmTTjAEeDzSjqipYwvBgFU80+OAzfR8sIRfZ5AS2EMMgpp4bWUEshscZFisjAj5YTDEo30ggd2/7XyvM52gdwSAuYNgHQtxIYt6vdIMwb0Xy2hbhwc6pueVIixdQGIvBxXS7CGBfHcZvuOvDsrIBy/EAnKxkIKIjUNQqLOpQHmDSmRzcwufMbpMpdWzFn8Ve6Nz+sWULT51Y1Dw5m7M6ICww3FPw1WhGmUy1udaGcDMUH2OcamHeM/iFErEzpQ8dDOFMXeibTIMh/ce6AnExIaJFIaIAJbgqIMSsV8NgQpUlAAVQAVKIPGqopkRUkZQsxEzkRJZrzsZfkkmIyISkc5qdtRJsvAxImJAuRPCUCB+PozqSDpomReTc9Ce+mcu1iciHDkhZjAJE4gdbSMiNqxgq0gSVbEAQIY5oigiZgLUqli1qRXxdNFEEbEhVbUKVed2oEqSJQWcZ9QwCUedOosPFQrm7HHHG6JnbR7I3N183gVEFAVYQocNdUFyiCc7bhUebr3/0nANuVSDI8fs/BLBsBoiMmCwMUqUppImCXFU7KkOjAxWFg8VR/vjgSpViyjk1BiB0ZRsM0nn2+2pWuP4TO3wZP34dGt2wVprcjmODKzAiotQ3eQz43DONUzExxre0r1asQRj8pwUneVHyC64qbAigqhPlCEzKGXmbDWcAokguA3/dXJk392OHTB7uPEJGUNgwDAbFmjSToijntGBoQ3L+jYsza0YlP5ikjcJcQvcAlmwhRE1ohHApDHB5MUUW8rTDdk3UXtq/8xTe2vHJqxolMsxCNaSiHMTXfLyfI1cvOcIkU/ChXAmy7a4pXXG4f8KcOyU9MJXnBMIa0aevLmoOs4W1kIpYBuCNnmh+VsyExOYwKTMYOLIKFPSSqJCYXTj8sXnry2ePNTuieskTdUEZIVsqknTJg2btCRNVZXV5FAoUL6suZJGBUEMmAhxSU1uvqVPH569/4npJ/ckzVZUyJEqrIVzpVa8SjsYzEIeT6ChgIBcSkQyPOm4OfjQwHFjt/YXXH5OuM4LJssHwSdbg6vucJKQY/PSISWQYf9JxGRImTjipG05jpefs2bs0pN0ZWmB06aKELca6cKR2dlnx+d3TjQOTrfH6zLfThupJAKAjKFi3vSUzVCfGRvNrVmWX70iWrwIxYqqyXNcFRPvOTH7ywcnH91hU4nzOU2t0yYoIKpivWdTqIqbVPBVBGZ1GeAOLgfyrcLOvLzVCl1w+bndKgMoGQJcJMSZILtUy/FsZTYgKAfLYlYCGULMbEgUSTtdvGFszas3m5Or87bVgiYi03snT9y3b+qBQ809szKbskQcx1G+wLmYjCFmdXFvKradpK12miRWBT2FaNWi4tmbSuefES9fbqN8pNxrcsVnj0z+4DdTO/ZEhTwBalMSJREVgag6R5vF+eoxCmAlVcZz2bYDVqGODgIkdP7Lzg5uyvOgjrcKCKQuGd8d67P3UOrCaSYww4Ai4hy3W+1csbjx908dvGTpNDWaIm2V8ccOH/zhM7P3H9dZmysVC33VqFzkOE/KAlJxrsc4yiAdSgGb2KTRTOYWWvW6lnO5M9aXX/GiwmmbNSrEHA+IsXc9duLHv06arTgfS5JClERgHUHwLycBQRbnqLLx5uUx3kWP3jZDhKl03kvOgU+kd8SE4AI9zjgq7EwoOAMYjzhEIENqiA1xLmo32wOrhja/+TRZGc81GxLHR584tOubj8/dP1HgYnGoJ64UiRliAKMWKiSiKgxSkFFv7Y5VM7HnB0okVtoLtebkZFuS+JwNPX94Rbxpk7XUWyz3HZg4cdOP5vcdjIsFTVISVbGkSqoi1umRZtgU6KF2mYeqBBeUuTNRBZ3/krMzlUFHR4KDzOTlZeMibYJhkIsZiCKmiMBEEbebyarzV5305g0zUa2lMj/X2PmfTxy/Y3+c5sujfbliATAqUIFNHC1kR81DNpICM3YRicvPuXoOwessJY1m/fiJlrYKL7+o701/oL0DEZuhhBe+def0w4/nSkVNUrWpqvg0gooLF12M6CVFnZBaKfvLZ81VXM4LdM4lZzGH0IOem70JdM9LlF3qhJUJTGyImMgAEVFkOKZ2PVn3krWr3rB6uj2vuejA1kPbb3jE7kn6xoby1aJaiGURqAWUoJy2JW0mNklJicBkDDsuJyoiVlSJKZcz+TybyOePicAGzEJoLSzUjx7VVYt7331NvOVUm+hIvmRv+++JX91vSgWkKUSyP6ICEUfyVWzQIKGQXAjsGKTqalqqoqJ0ziXndLv2zHcz+9JHR4nY8WBSBhhsmCOCYURkciZpJhtesW7Z65ZONuYkHz394527PvdUyVSqi/sJrFbFkhONpEhqiW3afKlQWTLQs2pReWw4N9LHlZLmYkUkidq5VnN8rnZwvLbv2PyR8dZCg3K5qFwmQ+KIoInUGAvUjh5ptGvlt72hcuXlktqhUq+9/Rfj/313XC4jSUkVIipWxUJShLdQh6sghi9WOqaHjjm6txEAEXW6olmkpj5ZEa5zsZEnh9643A8GnON2o3XSS1avfN3iqea0xvzojY8c/vcDA0uHin1lSUislQQkDEV7rqUpBtctGrtgfd+Zq3TlQLNSasLUgZYisSQaKeeYC4bypcT0zic4MFnf+uzUfVtnd+9XUFQpK0HUEojZlJeOmenphS/eJDMLPW/8wxPz832venF/O529+yFTLqu1EIFNQSmI1KZQ8QkNV+4UZx0ezuGLCD4DwgQ6++Jz4fM+vggRoFpDwkXATIaJQMwwyhGBCYZMzKZgWs1k2TmLtrxrzVRrPs2Zh7647ehNhwdXDudKBUlYU9VUAW4vtNOmjJ2xfO2rNhfOXDpfjmdse/bI7OyuyfqeidbRuWS6KS2ryijkqadqRoailctyq1flF40Vi73VuRZt3TV5512Tjz5B+ZwplQWqbBBFauJ2szF3cH/uyst63nxNqhgqVJrfvrO+7WlTKNj6AqTNIE0TSKppm1TUpgohB4cBlQMJDi4eqtAoZFpdgTdLBTzH32c2GBJbIFIwUUxJmgyurJ76lhWzyQzy/NjXth3/9pHhNSNRLieJatuqBZSb042eJb0brzmt/0Vj8znsnzh89K6DE3ftq207lhytoW6hLkoxcIUSEYGiEPOigXjzSbkXnlc46+zieaf2n7a55/7HTnz3BwuHj3JvD0RhBbBxsdyzcu3Mj36h+XLPNW+cFtalS3Xbzna9lj/5XNVy+sSdxAYiYKOJDTkmha9ywdc9fR0cvlRHSme+8CzvwZicgnFISBBCBwC7PBeRYYrAEcgQxUw5gPCiD22hFbZJ2Pr9Xc/csGd45WiUizWFJFALaaMx01r/0jWb/+TU+qA5Ojm7/+e7D9/6dOOJaZOafLkUFfIUR2AOBXN2TkREbDuxzVa7XrMG5uS1hSsvL1x6cWVkdGBibv6mW4//+p6op4dMLMwaGcT5VmLnjh4tXfU6u9BKfv1geXSkct6FzZHLGr+8uTT+AJsIaRNpG2kb4nychctAw1layB35wEMB0BkXnp0piJcFQOyjTiKAVRlExBFTBDLKkaGYoiI3a63Trlq14hUDNW3v2T7xwPse7+8bjKsFtKEp1CJNkMynZ75944rXr5pCa//DR576/NaZ+04Uc5VCXyWKY59XCvlA1cxNBK9BbFVtkrTn5tutpjn79NKbr8mdfvqgyfFPfnHs27dqPo9cDlEkcVHzpVazVZucsHVb2bBu7PWvmU02H/ru90sHbq8uXU1pE+060jalbdgEIpAUakNtxVcR1JfAfVYxUp8wDSGX1z1vl+AQmLphM1ywbmIk7XTkpN5VL+mrpQvzdbvtn5+pFnryPQXbEk0JFjZBsmAv/D+bF1+x9NjC1JO3PL3z8zuiejy4eJGJYlioFVVWuPR1SD2xcelMl9aTtG1yMcf5eLBQEFvb+uT0B/+68pa36qtf3fuKl41W+47e+HXECo5hYphcvr831UrxvOGlV10+N776+E+35vb/sLBoOZh95J7lKkVIxHl1SJZ5904si18j566sy5kxoMpOiuytlH2Sw2cEOWIYuFTVptcskripwNb/2JXukt7VFWkLCTn9bS+kF/75hsVX9B2ZPv7I557Y/419PQMDhcUltaSpQIKx+1SB95/tuXlNbVQtsWFNpDQ61Byfgom4kCMTV5cuyy3M17/0FTkxaa++tvyC84fAEzf9J6IYuYJynNTskpdvGbrs/PFdSw7ctVce+0p10bKoXNV2LWimU1VxyXSIC2MFGd9zlFp9cTRyYYTHbleZ4KzoR0GjQAwYuBQPx2g10uVn9g6eYhpIDz81c/iHEwOLBjVVWIUlAtUnW2e9ZfWKVw0cmp168B8eP3LzscGxUcOxpICoiJIyQlLC27wqRFf/4SWFVYsP3XZ348T0qhv+Ilq5Qg5OHvrkv7Ump9VE2loo9vZFld7Z799maw38yZ/RhRf2tGXmpz9Xkxfh0defGq9aPr5j8OjOBXnoS3lKRl/96ub+/QsP/s5EPjUfUn8EInUJAJWQ2NYwKh+nsSeNwfd7wQVEIpd+BOAE5KMYMTGtv7w/Qatl7Y7/PFgypagYqxUIQdGcTVZc0L/hmqGp1uxj/7Lj8M3HB5aPMEWSKgQqPhgVgTjeLwKCrbdWX3dF7o2njleTJZ+4duUN7xmvzTx07fv279s79MmPxn09PRtPWf7+v8yNjlKS9KxaZ++7u37LdxfGF6Ya7aRt457Kyvdf1Ow141urx09EjXu/lpfZgZe9sn3u6XbLFmKEKgv5mXGW33Fhvktx+PCHARYhsewy3y5McaYnqiIdN0jwXsyX5yIkLRndUBpcnxPowa2TU7+rV4YrahUWajVp2VJfdM57x5pRc8fte3Z//dDgsiFGpNaRWBGrEIioCybJ5bpaaTxUphct2/bef3vmDZ98+mu36YUnJfc8Fu08OPV/P3vkgYdH/vWfozddfaJ3uHzdB3PLl0VRrrJyTfLb38x+5h/nv/Od6skrFn/4wuN797d2DCS9K2r//Y144vHi6HI5ecPsXKu9ZIxXrJRW07WIZeWpkAgJWgNhr02OaFi1llVIxWVJAy4BoXTiDc2laFyWgAyslRXnl5WSVO2eH48XTIEjhnXpFzSn25teN1RZGh16YuLxz+7t6etjjiRVFYUoJJivWzeBKkFAbJpT8wuTs0t/78yexUuaP3h49wc+v/j/vH70iouLxcrCv3zl4D0PtHt7Jz583fjWbfmr3yEqUV9/cWQRj59Y+aaXLv7oJfv/64GFB8Abz164+5dmz6/LY2ukPj/7m18htdYwbz5NkzRE4wxXaNKQogVIhUQh4jIBEAluySqJU6KOiVFmbiF75NOHrNZKaciMnpoTpFMHa9OPN0oDBWmrpqpAUrMDa/KrLy/PNOa3fmUfzeTylYIkKs6ybChICFQ93/e8lVUb7f3Xf3/oXS9eefWLC/ly43v37PrX/xz+x3cPnHt6LirUPv/Z+rZH1371Kz1ji+f37kalJEy5voE1113Vc+0pu7/5i9Z9tdLLr5r67Ta9/6byylMoX+GI5YlH7OGjaiGr16GnV9MUbrXVOywoIC5zBHWpSLXuE1JlFXZFFFhVq77KpORMLMsHeVhjgDVty+iGfLEHCj10/4wusMkZsVZEoUgbdsPv9+V7aPc9x4/9ar46XJZEfTEqS9l6uXsfFtILkuutJPftf/ovvtJz3ctHrzw/Xyg3b7l737/fNviJd/WcfkqhWJ372pfHDx8xJ59sf/fLlKiweHTsfS+PLyjv/fIv6nfuG7j23XO7jqY//kKxb8iMrNP5CRPHUbOebt+qSranD8tXaKsF5oy3ZK7dZSAdusAbPiCWoBwuUUUITTrl9Y6BOndMDFFZtDkPaCu1R383ny/mnKUAlDa1NMwrLiottNs7bzuRQ4GMEeuMWoJKhrRC0E31VW6QorxouPmzZ55437+VP/DKoVecX6j01L/zi7033dZ3/TurZ2ws9vbOf/NL89t/N/q2t/a/YMvo+y62Y3OHv/HbhTt2jLzjT+cWqHX7vxWNRJtfbg9so1Yd1sbFsj6zXVstyyxrTlKbOpzuqu4x+zqqdfEFi6iK0xcVYc0qQeEH12YXFNCFY95MFYjL1L86Euj8sdbCwTRXjsV6Jpwu2KVn50uDfOSpuanHWqXegqToUPjQs6jaXZgKxBTej5THFrV/+sSuj9w4+vfXDr30nHyl0vjer47+5BeDH39L9bT1+WJu7pabkhGuvuf8ttl9/DuPzdzy6JJrrm2MrK3dfGPuyJOFS9+RHn3azB5hYmo3TaHAxw7ZiXEVyNhKFIoQ1dAHDoKq+FQZiMTDEmfeQzQK2KyusUA1E0pg/FlXgVGbojJK5WEAdnpvUxvEZbItVeuSKjJ2fsFCDt43K/PMoyZtOePKbMsJi0N8HIqZvn6nZEjSpLJoeNFLzzu6Y2fPO1+ekM4+vrNx591HB8oj734t/cePqhdtxoopntx/7IcHp27dMXr5lfbsS2a/dat59KflV76n3W7x7vu4f4TSpgJkIm7W7KH9PLZCewekb8BMHneZP4chwU6yGAJQqAiyrtlOTptAWekrgFhoZvDezKZSXcRRrAqZ2dtiMiAfTNmW5vsxeHLckPTEY/V8Pu9zeIDvYtUMhbQ7+xtKlgImsZYVKz//tnTN0P63f2rvV28b+ujVfRdsjgcqc9/7+dT2Jwc/8JrCucWexjPjP9o99YOnBk8/Lbryqslf3U0/+Wb1wlcmy09Lf3VjrlQlm2qSwCaAGmIcPQhRzRd1YMThtE9Iqyd23lt0ENpBpPqWIe280NWsoFnpTZ2CEcRqZVFE0BQyd6hlInYVOwJsWyuLqTzMC+Pt2j4b5SObqnMNzyvmdaILzRIOIMPSThm89stvmy+ku665oafas+zl503sfLb/2st6t6xb+oItw6ePwG6vzGw7dMeemV8c7B9bWnnDWya3705v+kJlxVq69K2tOz5bqpSjwcXUarIKREmtiWKaOIE0BbP0D3sY0swFBbR2JFu6kFIB1SirDakvJ3blfnz05hVIARUpDoCAJJX6RMpRpOIbYm3b9oxFEfH84WYyo4UcWb9bgbql3nlW1xtELK2E4/jkb7z5RG1u99tv7BsdXvPFP5uanz3ywS/Urrxw/dtfmkbNODpUnt6547apmXtr1Xyx//VXj7ei+lc/V+I0f/XHpv/724W9Dxbfc0P74G7d+xRVe0ghViiKaGYK7URLMXoHVcXvRsj8vccV9bXmLFgN9EMRqqaZQXrqHXDCe0UFkeZ7SaG2KWlNTURw/lEhViojzEDtWCItIsMQuMqSK18zgX0rawbLAIDI2GZq8rkN37p6YmZ897Vf7hscPPlr750cP7rv/V/uHR5Ze/pyW5yuyvbhuW1P33545p75grXVS182v+zkua9+qXB4V/UdfzfzzJPmV1/PnXVp45xza1GepO0cNlSII2rUpNUCoOVKl4cObtoFGOqTGb6vWbzpuQ4zhF7SrCnEh2oARKXDzxm5EinIJqqJawVwFkuqmusBgPacpdAS46C3OW9L1XzSTNKknat4r+eWiAynjXauUtjwrauO7D+0663fGVi+5JTv/Pmhp/ce+titAyt6L7l+XWtNRRYejxoHHrl5dua3KBEVNp6e/N5lk1/+WvTb/x5464dmCwNyy4eKlUr7tBcmMbRYdhUCBcMqCJQmkqak0HzR7TrIiEYwliC3YPUOPFUlCqbIoTUCUFXXOaikcAkbCNSAidXkAUCtqO9WdRNVhXIOAGy7U9Alg6Sm579r2frXDC/M6T1/v/vYg1OlgYJtCwgUUVpr5/tKm77zukM79j1zzc3D65ZvuvW9+x598sjHv18eGoCJ642Dfe3js/Pt331jcuZBUymX8n2jhWveevCOH9tbvjHw0te2z768dv3bq5FCTVKfhwK5vIgaVUAIosTI2JaJfeUiC8g8Crh/RVUIvr/PyTHS0PbpfZ26zm/SDkZ3obi/p/gia8azVVXEVSI5YrdAbKg5K2suqax7I3/vvfeMnN138dfPvPeduw8/cDzfm1PVtNYuDJdP/c5r9j2y8+k3/2DRxpUn3/wne+7devhDt5WH+nPFfHsi+fX1B4cvzE3vbDV3xdXeXtSl+v4/PvL0s+2vfam6fgO94bqJL15fOPJUtGS1zEwSQxlw3BSdeieF3T5QVWuDvDLcCUgJF6sHePFZDM1MUkV9o6h04YSPfF0RW5C2BCAy4AjQ0IdKUNXWggU03xMxuy00sC07tBnju+f2/bDxxKdPPPCZx3/vxi0jZw21FpI0saWxnrO+96q99+14+tofLD5tzabb37HvrkcP/um3htat6jt5TTqxEMfGzOSO3NxMn4mrlYo9Plt9w5smLM3/4z9Uc3HP+z81/bNbzT3fKwyMUNqCCgpFAFqfd8XJ4AMEbMAGCiRtiHWg4kHXudIs66IZHnt5+i0knixRB5WduUkngFJVaOqkgKjAUZFV/Aq5dGB90ipQGclxDlCo1UJPtPXmE71Lyxd/8JRyX8+zN574zWceOOfGLYObBqpjvefccvmzv3h855/8bPFZazfdfu2uOx88+J5bxl76grF/+4u+G/5k4KqX2PGF2OR6eirFYtkene29/BWtM06f+tj1uX17+q7725kTJ+SmT5eGFpEIWatM6O2DgmYnKbhpAmAFcY7imAho1CEheZi5Ccd6NBDADgcBEUXBJr0oWUnF7/BxnNy3RCgIKqk2pi1D47zJ95rmMTGxb9/jCHNH0xRSXVLIVY02BEyitm+kyoZf/PFV2o6evOPAnq8c5dLjL7jx/LlpPPW9h3d++MHFL1i36dtX7fjWPSc+cW+12hNdsunEU88c+tStp/zgM+XdxxfufiQa6ktPTFdP25x7yxuP/O0NdP9ve9/157WVJ9Xf/aZyqRRFORWrqloomeHRtA1MHCYTZWqgNkWxQvm8Apif8QVoEVe5V3EJl4DQHlERZBV2P2a/DbSuS7rh1+4WtRNWgIi4PBxZK6EzDVHezB5I6rW0MpqrLM2LVbVaHjWv+JflW286+v2/+t1ZH1+y9pVLipXyvi8f2vadrekie/ym3csuXHfqLX/w5L/fdeLvflMZ7jelwsQP7uvZsrrSSPd84HPVD785Gh5s7ztmypXiB957+D9vle/d0X/JZfzGt0x+4kP5yWNRuQqxADRpY2CEhkYx18CJgxrnvG8mUmsxOIg4JgWmTpDf1xC29mX+NGAtXKdDSMR4N4+wLyxsuArsFxCBEXIBpol49nCaQg3QO5Y7IA0YBQMWUZHmD9up3a2xLWb41PLUkw0FL1rHaZps/feptJ42Gg9d+ukLmfN7fnJg7+eeTZXP/97vt2tm+7/+avxzW6ujgwRGMZ8+tGfqrseWfu69u172gWPnnzH8yb+sfeyL1Q+99+i27fVPf6Fv6Vj1Yx87fPO3ot/dk1u6nGyiZEAR2m1acxL1FHTf0zx1lMpVQKBhV9PoYjKkTcHEUeIo62Lw/ld9J1H4JGweBCDK3RqCLr3RTN+yMEHAEc0cStrNFNCB1UWKXcYACnCO0jodebQGyNgFVUSaK/Gxx+tQvuzjm8oDlaM/rd/90YdP/7uTxy5ZGsf5A59/au/Pd9BIbu72fcVqmePILUyhr2fiU7faxf2j73zNzIf+ZeLxp+NPvX/8yOGF//tPeYvev/rg1L497X//cnF4EWdDVBFm3nIWGLpzKzdrFMcKvz1T2fDS5USg2gLGjyCOnJtTEUJgzwh93/D8MLzEB6uUebIuZ+4kGxJJKik4poXjdvZwG8DAqny+36hVZVcj0rgY77+vVms3R0+r9K8tQTSZN7e/Z8fy38+f+6frC5XSwR/N3PXRezd+4pQlFy/P5csHP/n4oTuePO22N+VHeqTepoihwoVcbrZ97FPf7vuzP+gZWzL74X8+8Ib3zP/1P+bHZwbefm19zfKZD324VCiaOHL9GGBGu0XLVvDmU2WuqY//Nsrl3T4iGAOxWq1i6TIodOIYzUxQHAcfJ25ezvlnioFQendCCAmzoDmeSbrEvQZMVxdPgRm2RseebCq03BsNrikkbcvGB3aFvmhie+vwY3PFAq///cVJ05YH8rNP8A/f/vhZ7xw58y3r4lx89PbxB//+gTP+6dyxi1bGlN/3N/cdvvfJjd++OtdftvU2mDW1+cGB1g/un3169+AHrsm3tTjXjOYa/Reel3/XtRMfvz4/PRNVKlDre3uZtN2KL7pUBwbSZx7nXdu50uMaN8GsSZuWLae+flLI3mdM0iI23ul4MSmF7HSWKfThhIKIfCzWiSc7sUrYHCPwJwYIVGAic+jhRgpl6NiZPVbUb24lmJgojZ75/mRDWmsuH+lfX27X0/Jg6aQLxnY/vX/s6p6Nb1qbKxaO33b8wU/dveHT5w2etSQfFQ9/5O4jjzy1+pvXUCVnW4mreheKlRN/cyO9YPOSv3pH36qVw39wRemGjx/98tf5gUcKI6NqrV9SYm21ecmy+EUvlnoz/c2PItumOA+QMoFZrPDGUxEZtNr61FYTxyoW1kIkZAXV9YBnUUSmPo5Bdh86gA7nzqxNOqkSayFtzZXMie2t2aNtC7v0jGppMLYiZFwnkpYG8wd/vXD4sZlcWTa9bWXStkSy/o8qe380e8tr7lr37mWn/NGGfKFw+KZ9D97wy1M+f/HQmSvyUXHvX/7o6LN7V/zTVbBCIIjGlbI5MHHwPX/fumBz9V8/om9+7f5/+kLrK98oDg2T+E0CBCYTaatVet0f2eHRZMc2euieqG9QVVy4rtaitzc6ZRPZVE8cwf6dVCzCtr36iPW1hMB6QniekWMoJDOxTpwGJRXXBuyRCeL+qFoyOW7P0p575xVa7o9WnNeXtBKKXKkIJk8sua1fPThTn1t+6eApr1ndmGrd/Zl9p79z1Vmv2zR9ZHL9X65edeW6KMod//rup7/10KZ/vbJ342Kel4MfvAPrBvNrRqWZgKFqi4MD9NiuQ6973zNX/8X+171dvntHuX+QjVGE1u84snNzpRddHF16WXtqunX7t3I2Nfmic8kaxbbZirechuFBKNknHuHGPJsI1pIKxMJaFQuVTi6xY2KqoWmSu6ija8rzjNvnQNyHLtvvktlChVK86+ezjaYVTdZfNhIVjbr9cQYAykOFI/fWnrz9cEqt0969ftEZw099c+ruf3xm0UXFbZ/c8dN3/2zVB9avvOJkU+OF+45P5KZXf/bKFa8+d+2bLrP1tHZ0giK/74wExYHBarmnND7XE5fKixZHJnaoTEQUx9JoxCtXlP/4HXU1jV/cqY/clxseFkCZ1W0Cz+fzF11oJUVtIX347qhQVJtCLNzfUO+GwsRC6cVFuU4YEnV5dgo4HTZcZ0UIhevXVYUmmq/G07ub++6fPfniXN+y4qoLhnf+8ni+GItVMiCgOlR98ktHhjYNjp2WO//vTm/9WXvf9yf2/vAhgyhdaN/7/l+e/4krRs5bJWf2b7v+l9qI13zgitaC7PvId3Wmht6qPyoFSmJNFJtqzteGXPaXiOJIWi3T1zv44ffP9Q82Hnms+Z2vlQeHYGIYUiZEkTQahRdcoCuXoaHJ9kfp8N5ocATtFsSqJBTsy8kh0GalkEL3XBqgtSed2il/EbHb1GaIjDKDWDkiMkoGnCPOgyOYAuqzrcoqfcVn1sVxIR0v/ddHt6dNqwk0JUkAoYXjDRpKL/qXM0ZWLkt35+667t7pfZOFvpIkOndstnBGddErT5p48Nj0j/ajLVI2SDRnudjfG1huGKAPnEiJyRCIKYpsvZ4bGlx8/V/Prds49+yBqb/9SH5isrBoqZLvyBM2iHJ9H7qu1jtgF2T+hr/PHz0Yl6toNThtwbaRpGrbZFMSgdiQJVMSkbAZ0z2eA1kKQ3KDEiWXrvYoRlBSC01VLaStpd54/InWzl9OEml5hLa8akWrkXCOYZQMAC0PFdsH9Ld/tX382CStwYWfu2jRqUtbM01iqi7qa2+rP33dPTN37K/09vWMDlVNuVqqFAf6PAsJTpVC+5/fRMtMhtPZuer6NUtv+Nv5k06qHTw0/ZlPRocP54dHFAJmGEO5WGr1npe/2C4eVqXWA/di91NRtQepUxyr1pmDS1p3zlmBb6TOAg1VVe7EJdnLm6ErEAdaZFVTQerEBBUq9xS3fWt8YabdtLX1Lx0a2zLcbrY5x8TKhkDaM9ZTe7J1718+dHjXISyXC79w6aY3nGWbaVpvV0Z6h1Yv6V00aIwhICrkTByTSOjxV2QbkAhgpjiiKLLNpjQaY697xZLPfHx2xbK5p3dOXv835qkdpaXLiBlsYBhRlNabpU0bcpf9XrPekOnZ5p235yoVcr2umkI6WuN66eFSIsFxdzoyHVF0iPRcN+8CD/HUoBOpkGsDd71rhZ64eVgf+sYhGGrR/Aveub40UBCxHJPrhGWjvWM99e2Ne991/7579sxX5ta9f8tFn33V4jOWJ/PNZL4BUY6YIqOGlOAbhrylM9i1qLMS0lpD643BLSed9OkPF697x4lCbva+305+5GO089ny2DJmhmEYgyiS1Ma91b63vr5mE+KodvvN0YnjUamiSQuSwKYkCrGQlHy3tOuh8iUqcsSvm/isW79FujYahM23IENs/FZbNmBDoUGRKK8mJopFoTPj8xddv3LdC0cilGae4J9/6mFmRkKSQNyCCS0crzVta+Wb165+/cbekWVxqzR994kDP3xq/LGDjakFgZIxZDicD+GjK0mtJpYIhb6egVM3DF3xe3zBGZPF4szeI7O3/6R284/zJi6MjIIMTIQoQpxXE9t2uugv3lnfsK7dovq9v6t97rPl4SWsSmmbkhbShG2qqZOUdcGKWnHN/T6wdDblKTRo3brNmvUp+A5xUoANkRMQgUg5IvYCYs6BIlCkpqCthSSJW5d/fkP/knKR+/b/un73lx7N5fOSQhJ1klKl1lx79thcaVN1xbUbRy9a3zOwOCeV9q76zMNHpx4/PL93vDkxn9SaNkkVaqIoKhYKA33llUuqm9cWTz85XbNsKjazR07U7nlk5rs/sTv2lhctint6QEZNDGMQ5zTK22Z79K1XJS88u7bQSg9PzHz8+oKauFyhVpPSNtKE0gRpApvCCtT6ZJDToIwMdjNFgNau3eS02ndgsT/dAgRjCOxLhmzAMbEBGbAhzoFipUi5gLnj9fI68/IbNuaKUdkM7vn53P3/sS2OY00hbWgCSQFlm8jCsYV6s1k5dXD0ivX956+prhgr5AZyKGKB7Exi59q2YVUZ+QJVy9pbbVVKdaKFhfrcvsPzv318/mf32+378sVKYWiI4oiY1eQQxYgjocg208XXvlYuu2B2ti4Lram/+Yfo8InCyGK0GpwmSNuUpkgTpIlK6ru2XB+Q+pCVXA7VV6F9XzmtXbupE7qS32/gOtSIiTjstWFwRMTERjkCRUQ55RgUCedp5uDC0PnFF//tBmOiSjR88DcL99z4MCkZimxb1ZImKpZUKGmkjYl6s9UyiwrlLYsrpy4tr1+aXzQS9fWZYhkmbxElKdr1tD290DwyXd95qLltT+uJfXJsJl8o5wf7TaHotrRoZGBynM+nVkVoyZtfa1901uxcXROa/Id/xqNPlpetpjRBu+kUh5JEbUrW79iAqkoKCUe6+ZZ79U154XAOWrt2Uwe3XQu978JidLYkAQxjCAYckTEKQxw7JfKqNLVvbvGl1Ys/eooxcdH0Tz2W3PuVR+ozjVw+b1sqCTQFLDs0lLa05lvNuUaSpigw95VMX9FUi5TPiZK2rZ1r2emazDbRSCMT56qVuKfH5HICEBsY1ihGZBDl2/V2ob9v2R9ftbB5zexcQxOZ+syX9d5Hi8tWsgqlCdotpCklKWzbWRYpfEOQWIhrl3Qd9sId9fHbWTsCInKbxQnZYRtuozuDGMrKRGyUDHEEMExEFCs5u4sEsU7tnxt5YeWiv96QK+fz3KtHqw9+fduBrfvifJ5gnLl5Rm5905tNJW2kaSuxbaupFRFVJmaODMc5U8ibfI7j2BV3lVjZQTJTHFvltJH0bVo/+rbXzA731pppOt+c+NQX9aHtpeWrWAlpm5IESUppApuQtc5bqWtzUbcrUQFPpqHq+07CNgwAtGbNJv90MEhc5y+787DYtxd5zXKG5vZdGpBRNkwxOAYZpZySweS+2fJJuYuuP2Vw2aDafEEG9/7Xwe13bm/MNeJ8nixbB0lORm79YJDV6RSu3TvrAxN3vofzFCaCMRTHopQ02/m+vqVXvii+7Nxxm6SIWgePTnzyq/TMweLYclKiNKE0RZpymmiaQCyJlw7UOhn5Y+lchNmViu8IiIjWrt0I37TA2Tkxvuk+KBH8RmHAgJnYAAaZNlEOrkxGsYJ19lANfXrWB9ateOFSa03ZDNjD+WfufGbP/Tvb9VaUyzNF4rybpdDE6Q6w8qxVKWwxJPZHNrBBxDCRCNK2jQqFoXO3DF75wtqS/plGohzN/Oah6c9/O66lpUWLIaqppTSlNCWbUpqotaSi1uGx3+9LIYfqIMkdloL/8aJ16zb5M69CV5Fm3VNEErb3MPkTW1zqh5g4gpMURaAYbMCRwijFqE22FmbrK147suVtJ1cGeqG5IvXXdyX7f737wKP7apPzUDZRzBSpslqoZS+mrNvYrQkxsRGwVdjEqlKxv2/4rI0DLzqjsWp0qp2kxMnU3MRNP67d/ptitT8/NIwkhRUSi8TCJpS62F3IurjUR6fkTiFAKBZKpjvISsoeedauOyUrjWV7xbLg1XVQKZSI2DWSM0BBfQyRURgyESFSJzKNhAySpp05NJ9fFZ/81tUrLl4RFQoGpRL60+N64rHjRx49MLn/eHOubhN1PeqOhjpiqsrqAVShxFGc7+vpWTHWd9r6wqlr2iO9s1ZairTRmv7VQ9M3/YwOThcXL46KZaTWy8J59MRCfPaHrMBtshLp5E9VId2hqAdiBC+vClqzdsPzoo9OU5nfJupzDAEoycOCo9dZ3B+RVyWGsriKZG2iuTBb6zm9svb1a5acvyxfrBAKMcomLdoJW9s/P7N/avbQdH281lpopk1rUwWITBTlC3G5XBjsKy0ZLq5cFK8YTQZ7FiKzkNpUNF1ozjz05PT37k4e3Zev9OSHh1iN25yi1iK1SFNKrXdS7o9La4hCbVZBhetmVe1mhhqSCT5aXrP2lG75ZN17maTcJjqH7Q4WgC7ANuR/YJAhjcRDOBOMklGbyMJ4vZm0KxsqS166bPEFy8pLBkxUIBQMiowc2RitSJuwbYgl1UiM0VzO5uI0F7cNN0FNqy2htJ02j0zPPrBj5mePJDuO5HPl3PCgiXIkICvOK2maUiqwVq2loIewLuZyyUOfQEW2ryB04qkyfOo+HApGRGvXnqLZtpXAFymcQ5WBtodur0cg1uwoKWYiQ8QKVicvikCR3//ivF7StvXxRmOhaYbj3jMGBs9a3HvKaHFRX1yuUFRQzinFgkiQEzWinMKIshVK29KabzePzc4/eWj2wd2NbQcx2ciXyrn+AcrFZEGO0ViBO0zAilrxaXkRVQvry8Kuy9kbk5OL81yZUnSKO9KxubVrNwb6E7RIO4UhzTJpTs3cfkz2J/qC/L5/sA9uHUiRxyZQ5FUMTMRqRdvz7cZMM0kSlE1uSamwvLe4rC8/2hP1lblURJQDTNpGWretmWbr+HzjwHTrwExyeA4LaRTncz3VuFLhKNI0kD2rTjQkoqlz5ALr0j2iEhrpAbdR2c3dccXMmgKgZKGqqIbDX9euO8UJxXFsZOeeOLffbWuZgHzTjUtq+x3QzsSI4ZJBTkyInJsOxxGwutMs1CJpJEktSZpJmljXtwQTdjgKVIgEBDZxLirkTbFkCgUyMQFqCTZ4aycgrzLqxJRl12FdT7T4faiaRRWOcWWxKWUNG1AFceheIPWbej0KZ9iTaRK0a58vwpZpnzax7qwLf3MoWJUYKiAD3wrpMinGqZXvRgcBTLliPlcuqOuCFRILn59zKQXX0ePSQsqqLBZIrKr6EosVX1yw3rKyuDyEEao+7gx4rKrBuaPbdXWKPuRJWAeR0ZW0Vw802v1ReBPy+PD9ZNmdfUZO/YZEX8gmNgSBsu+JICYVd9asOjNUf+SEZ1mGOWiQ3yWlYE3d/dyESb0IoE5rvLAEVl1FwZUnEAozFFo4NOtd9WcsdDciEEIeCN1A48UVBNS5PKuZdeN0CN7ItY27j13QK4F5M4l4VuCzuS5gYd8HmnEoJSLj2UPwJd53KJESwx0Jr+Jy4VByNJJUYd22KicdJyCfEhQNKVQJaoJQr3Dncyq8lnZlfSjEXn7BtWubpULJn8TpYctXeYKxhdOqsjxb11FW/jDC4PuI3NmG8Gc1wu96pQBA/tBKryLulHsKhzn5DJQzLq+21onGdTPD7TAVv9sPgCd44XyuUGuAOyWFgvq7TTTwu1L9Ymc60qmiUrADBHTyekIR/Ll5/ruUhRvIIlqCO4qKOm8RHCSyTdVOYF4p3FH7TlJCTMHrdbJxPv6Ek6N7oFt26/MNCsCft5RpSkZhQqeX+C5Bb9ronKwepBbQxifoKXAe6ugPsk+oIzP/YeT/DUlFpyeZqXlF0+DYgIw0OZtwqSL3fYRjfcnpMjljJC9cRxuYXFuuP7HKdyv5QzPg1S+EY7BOfbxQFI6jBK+tPgUY+sMytKEskghGnCUx1HcDdcIrByjUBTU+VleFakQIMgzS7RgLus8g6iCbSnb+p9u86XsgJDv6ww+BghKrVyKndqIKuCJPdtBwUF+/BlBHW4JCeuG4zF/HW2crr4CKELLTSrJwQbs1ovPq2twT/Diy/QdeA4gARBp8kJtiZkihBNP5sfuVfcVzLbek5L2d+vO/lbL9Q9Zl6yhYZdBEz8YCzmVm7QsyTnwczjMOB8cCFPrBfLgQMsrIyN7/MmggIKr+jw+7No+E7yrgTgNG9+26avMd2T8nmP2fwspWhXyXcQAvDesAVnIZGPLw4n1FIPn+mONseKrh8EPAt38FrQmD167u1EwLnieYzkJ2jfJ5kqOgoJ23XfcIPMjbvlPo5wjTfanrft3z6NzUfZS16LvG846fCAsOgIhdAkazY+kBhHM8gQyhw8EMXk2fO/WuDm4KbuJ5onneD8jsKIw/Y7//P+kg40HerWSqFSAre0gGOl7BtKNWTsndHTo8wB837fd6dCUzIe7oJ8p0iILR+RUJJhjEE449p0x7MuvXzkXPm+r/fJGnMkE6lFlJJz32fO3rYtJdIg93YdBznhpGl/0PRMjT5Ix9Pkf2/tUp5JI/8cmJ2smYtGsdMjcFdJm5YybZOZfPZfLdT/RWJt2TD4GUm64GDA7CJY8nmYWIZsrhBBp19KWbIzhJcPc8vWMIlLxr8SSIqyOKrtFrducgCO2q7Hqv2yH46gmTh6LuhztXLUGjuiQTZKfQrlF0XeNPvHmefDMDDtDu/ASFUSiecyJ51/pmd+p6DGXXAYGveI7kEUwzWctzhK4ZZ/NTCJuNg611IYMfdebKKGxhyz4JcvxfrElDrNBtDW4jiYal7TwloKt6oSC04ElGzwBEHZyBP34i08OOCoS0dDe5QJdJdz57ztp4iXQG3a1ZzzWQ/w94aJfUOwspKs/3Tc/9Thh8Biva9d/zLs6m2LEJyoYP/X/XD7pDgQeIFwAAAABJRU5ErkJggg==" alt="">Журнал тренировок</div><div class="top-r"><div class="sync" id="sync" data-s="local" data-act="sync-go">На устройстве</div><button class="skinbtn" id="skinBtn" aria-label="Сменить оформление" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-.6-.3-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14.5" cy="7.5" r="1"/></svg></button></div></header>
   <div id="skins" hidden role="group" aria-label="Оформление">
-    <button class="skin" data-skin="clean" aria-pressed="true"><span class="sw"><i style="background:#F2F3F7"></i><i style="background:#FFFFFF"></i><i style="background:#0B5FD9"></i></span><b>Clean</b><span class="d">Светлая, мягкая, синий акцент</span></button>
+    <button class="skin" data-skin="clean" aria-pressed="true"><span class="sw"><i style="background:#F3F2FA"></i><i style="background:#FFFFFF"></i><i style="background:linear-gradient(135deg,#5B45F0,#8B5CF6)"></i></span><b>Aurora</b><span class="d">Светлая, лавандовая, фиолетовый градиент</span></button>
     <button class="skin" data-skin="midnight" aria-pressed="false"><span class="sw"><i style="background:#000000"></i><i style="background:#1C1F26"></i><i style="background:#35D9A5"></i></span><b>Midnight</b><span class="d">Тёмная, мятный акцент</span></button>
-    <button class="skin" data-skin="volt" aria-pressed="false"><span class="sw"><i style="background:#FFFFFF"></i><i style="background:#0A0A0A"></i><i style="background:#DDFF3C"></i></span><b>Volt</b><span class="d">Контраст, чёрный и неон</span></button>
+    <button class="skin" data-skin="volt" aria-pressed="false"><span class="sw"><i style="background:#F7F7F1"></i><i style="background:#0A0A0A"></i><i style="background:#DDFF3C"></i></span><b>Volt</b><span class="d">Спорт: чёрный, неон, жирные рамки</span></button>
   </div>
   <main id="app"></main>
 </div>
@@ -559,6 +609,91 @@ details > summary::-webkit-details-marker { display: none; }
   window.addEventListener('online', function () { cloudSync(); });
 
 
+  /* ---------- банк упражнений ---------- */
+  // [id, название, группа, повторы от, до, шаг, тип нагрузки, как указан вес, на сторону, техника]
+  var BANK = [
+    ['b-bench', 'Жим штанги лёжа', 'Грудь', 6, 10, 2.5, 'kg', 'total', 0, 'Лопатки сведены и опущены, стопы на полу. Опускайте гриф к нижней части груди, локти под углом около 45° к корпусу. Выжимайте вверх без отрыва таза от скамьи.'],
+    ['b-incbench', 'Жим штанги на наклонной скамье', 'Грудь', 6, 10, 2.5, 'kg', 'total', 0, 'Наклон скамьи 30–40°. Опускайте гриф к верху груди, лопатки сведены. Верхняя часть груди и передние дельты работают сильнее, чем на горизонтальной.'],
+    ['b-dbpress', 'Жим гантелей лёжа', 'Грудь', 8, 12, 2, 'kg', 'db', 0, 'Опускайте гантели до растяжения груди, предплечья вертикально. Вверху сводите гантели без удара. Вес указывайте на одну гантель.'],
+    ['b-incdb', 'Жим гантелей на наклонной скамье', 'Грудь', 8, 12, 2, 'kg', 'db', 0, 'Наклон 30°. Локти слегка в стороны, не выше линии плеч. Плавный негатив 2–3 секунды, мощный жим вверх.'],
+    ['b-fly', 'Разводка гантелей лёжа', 'Грудь', 10, 15, 1, 'kg', 'db', 0, 'Локти слегка согнуты и зафиксированы. Разводите руки дугой до растяжения груди, возвращайте движением «обнять бочку». Вес лёгкий, амплитуда важнее веса.'],
+    ['b-cross', 'Сведение рук в кроссовере', 'Грудь', 10, 15, 2.5, 'kg', 'total', 0, 'Шаг вперёд, корпус слегка наклонён. Сводите руки дугой перед грудью, в конце на секунду сожмите грудные. Локти почти не сгибаются.'],
+    ['b-pecdeck', 'Сведение рук в тренажёре (бабочка)', 'Грудь', 10, 15, 2.5, 'kg', 'total', 0, 'Спина прижата к спинке, плечи опущены. Сводите рукоятки перед собой без рывка и медленно возвращайте до лёгкого растяжения.'],
+    ['b-dips', 'Отжимания на брусьях', 'Грудь', 6, 12, 2.5, 'bw+', 'total', 0, 'Корпус наклонён вперёд, локти слегка в стороны. Опускайтесь до растяжения груди, не провисая в плечах. Для трицепса держите корпус вертикально.'],
+    ['b-pushup', 'Отжимания от пола', 'Грудь', 10, 20, 0, 'bw', 'total', 0, 'Тело прямая линия от головы до пяток, пресс напряжён. Локти под углом 45°, грудь почти касается пола. Не выпячивайте поясницу.'],
+    ['b-pullup', 'Подтягивания', 'Спина', 5, 10, 2.5, 'bw+', 'total', 0, 'Хват чуть шире плеч, лопатки вниз перед началом. Тяните локти к бокам, подбородок выше перекладины. Опускайтесь полностью, без раскачки.'],
+    ['b-chinup', 'Подтягивания обратным хватом', 'Спина', 5, 10, 2.5, 'bw+', 'total', 0, 'Хват на ширине плеч ладонями к себе. Грудь тянется к перекладине, локти вниз и назад. Сильнее включает бицепс.'],
+    ['b-latpd', 'Тяга верхнего блока к груди', 'Спина', 8, 12, 2.5, 'kg', 'total', 0, 'Корпус слегка отклонён назад, лопатки вниз. Тяните рукоять к верху груди, локти идут вниз и назад. Не раскачивайтесь, не тяните за голову.'],
+    ['b-row', 'Тяга штанги в наклоне', 'Спина', 6, 10, 2.5, 'kg', 'total', 0, 'Спина прямая, корпус наклонён примерно до 45°. Тяните гриф к низу живота, локти назад. Корпус не дёргайте, колени слегка согнуты.'],
+    ['b-dbrow', 'Тяга гантели одной рукой', 'Спина', 8, 12, 2, 'kg', 'arm', 0, 'Опора рукой и коленом на скамью, спина ровная. Тяните гантель к поясу, локоть вдоль корпуса. Внизу полностью растягивайте широчайшую.'],
+    ['b-cablerow', 'Тяга нижнего блока к поясу', 'Спина', 8, 12, 2.5, 'kg', 'total', 0, 'Сидя, спина прямая, колени слегка согнуты. Тяните рукоять к животу, сводите лопатки. Возвращайте плавно, без округления спины.'],
+    ['b-tbar', 'Тяга Т-грифа', 'Спина', 8, 12, 2.5, 'kg', 'total', 0, 'Корпус наклонён, спина нейтральная. Тяните к груди и низу груди, локти назад. Подходит для работы с большим весом без раскачки.'],
+    ['b-deadlift', 'Становая тяга', 'Спина', 3, 6, 5, 'kg', 'total', 0, 'Гриф над серединой стопы, спина ровная, грудь вперёд. Толкайте пол ногами и разгибайте таз одновременно. Гриф идёт вплотную к ногам. Разминайтесь и используйте пояс при тяжёлых сетах.'],
+    ['b-hyper', 'Гиперэкстензия', 'Спина', 10, 15, 2.5, 'bw+', 'total', 0, 'Опора на таз, ноги зафиксированы. Опускайте корпус с прямой спиной, поднимайтесь до прямой линии, не переразгибая поясницу.'],
+    ['b-shrug', 'Шраги с гантелями', 'Спина', 10, 15, 2, 'kg', 'db', 0, 'Руки вдоль корпуса, плечи тянутся вверх к ушам. Задержка на секунду вверху. Не вращайте плечами, не сгибайте локти.'],
+    ['b-ohp', 'Жим штанги стоя', 'Плечи', 5, 8, 2.5, 'kg', 'total', 0, 'Хват чуть шире плеч, ягодицы и пресс напряжены. Выжимайте гриф вверх, голова слегка уходит назад и возвращается под гриф. Не прогибайте поясницу.'],
+    ['b-dbohp', 'Жим гантелей сидя', 'Плечи', 8, 12, 2, 'kg', 'db', 0, 'Спинка вертикально или 80°. Выжимайте вверх по небольшой дуге, внизу гантели на уровне ушей. Вес указывайте на одну гантель.'],
+    ['b-lat', 'Махи гантелей в стороны', 'Плечи', 12, 20, 1, 'kg', 'db', 0, 'Корпус слегка наклонён, локти слегка согнуты. Поднимайте до уровня плеч, мизинец чуть выше большого пальца. Опускайте медленно.'],
+    ['b-cablelat', 'Махи в сторону на нижнем блоке', 'Плечи', 12, 20, 1.25, 'kg', 'arm', 0, 'Стоя боком к блоку. Тяните руку в сторону до уровня плеч, нагрузка на среднюю дельту постоянна на всей амплитуде.'],
+    ['b-reardelt', 'Разведение гантелей в наклоне', 'Плечи', 12, 20, 1, 'kg', 'db', 0, 'Корпус наклонён почти параллельно полу, спина прямая. Разводите руки в стороны, локти чуть согнуты. Тянитесь не вверх, а в стороны.'],
+    ['b-facepull', 'Тяга каната к лицу', 'Плечи', 12, 20, 2.5, 'kg', 'total', 0, 'Блок на уровне лица. Тяните канат к лицу, разводя концы в стороны, локти выше кистей. Здоровье плеч и задняя дельта.'],
+    ['b-arnold', 'Жим Арнольда', 'Плечи', 8, 12, 2, 'kg', 'db', 0, 'Старт: гантели перед грудью ладонями к себе. Выжимая вверх, разворачивайте ладони вперёд. Управляемый темп, без рывка.'],
+    ['b-squat', 'Приседания со штангой', 'Ноги', 5, 8, 2.5, 'kg', 'total', 0, 'Гриф на верхе спины, стопы чуть шире плеч, носки слегка наружу. Садитесь таз назад и вниз, колени идут по линии носков. Минимум до параллели бёдер с полом, спина нейтральная.'],
+    ['b-front', 'Фронтальные приседания', 'Ноги', 5, 8, 2.5, 'kg', 'total', 0, 'Гриф на передних дельтах, локти высоко. Корпус вертикальнее, акцент на квадрицепсах. Держите локти поднятыми на протяжении всего движения.'],
+    ['b-legpress', 'Жим ногами', 'Ноги', 8, 12, 5, 'kg', 'total', 0, 'Поясница прижата к спинке, стопы на ширине плеч. Опускайте платформу до угла в коленях около 90°, не отрывая таз. Колени не сводите внутрь, наверху не выпрямляйте до замка.'],
+    ['b-rdl', 'Румынская тяга', 'Ноги', 6, 10, 2.5, 'kg', 'total', 0, 'Колени слегка согнуты и почти не меняют угол. Таз уходит назад, гриф скользит по бёдрам до растяжения задней поверхности. Спина ровная.'],
+    ['b-lunge', 'Выпады с гантелями', 'Ноги', 8, 12, 2, 'kg', 'db', 1, 'Шаг достаточно широкий, корпус прямой. Опускайтесь вертикально вниз, переднее колено над стопой. Повторы считаются на каждую ногу.'],
+    ['b-bulg', 'Болгарские сплит-приседания', 'Ноги', 8, 12, 2, 'kg', 'db', 1, 'Задняя нога на скамье. Опускайтесь вертикально, вес на переднюю ногу. Повторы считаются на каждую ногу.'],
+    ['b-legext', 'Разгибание ног в тренажёре', 'Ноги', 10, 15, 2.5, 'kg', 'total', 0, 'Спинка подогнана, валик на нижней части голени. Разгибайте ноги с паузой вверху, опускайте медленно. Без рывка.'],
+    ['b-legcurl', 'Сгибание ног лёжа', 'Ноги', 8, 12, 2.5, 'kg', 'total', 0, 'Таз прижат к лавке. Сгибайте ноги до максимума, медленный негатив 2–3 секунды. Не поднимайте таз.'],
+    ['b-hipthrust', 'Ягодичный мостик со штангой', 'Ноги', 8, 12, 5, 'kg', 'total', 0, 'Лопатки на скамье, гриф на тазу. Разгибайте таз до прямой линии от плеч до колен, сжимая ягодицы. Подбородок прижат, поясница не переразгибается.'],
+    ['b-calf', 'Подъём на носки стоя', 'Ноги', 10, 20, 5, 'kg', 'total', 0, 'Полная амплитуда: максимально вниз до растяжения и вверх до упора, пауза 1 секунда вверху. Колени почти прямые.'],
+    ['b-goblet', 'Гоблет-приседания', 'Ноги', 8, 12, 2, 'kg', 'total', 0, 'Гантель у груди двумя руками. Садитесь вниз между коленями, локти внутри коленей. Хороший вариант для изучения техники приседа.'],
+    ['b-bbcurl', 'Подъём штанги на бицепс', 'Бицепс', 8, 12, 2.5, 'kg', 'total', 0, 'Локти прижаты к корпусу, корпус неподвижен. Поднимайте до пика, внизу почти полностью разгибайте. Без читинга бёдрами.'],
+    ['b-dbcurl', 'Подъём гантелей на бицепс', 'Бицепс', 8, 12, 1, 'kg', 'db', 0, 'Локти неподвижны вдоль корпуса. Поднимая, разворачивайте кисть наружу. Опускайте контролируемо за 2–3 секунды.'],
+    ['b-hammer', 'Молотковые сгибания', 'Бицепс', 8, 12, 1, 'kg', 'db', 0, 'Нейтральный хват, ладони смотрят друг на друга. Локти не уходят вперёд. Нагружает брахиалис и предплечья.'],
+    ['b-preach', 'Сгибания на скамье Скотта', 'Бицепс', 8, 12, 2.5, 'kg', 'total', 0, 'Плечи плотно на подушке, локти неподвижны. Не бросайте вес вниз, остановитесь до полного выпрямления в локте.'],
+    ['b-inccurl', 'Подъём гантелей на наклонной скамье', 'Бицепс', 8, 12, 1, 'kg', 'db', 0, 'Скамья 45–60°, руки висят за линией корпуса. Растяжение длинной головки бицепса. Локти не двигаются вперёд.'],
+    ['b-cablecurl', 'Сгибания рук на нижнем блоке', 'Бицепс', 10, 15, 2.5, 'kg', 'total', 0, 'Постоянное натяжение троса. Локти прижаты, медленный негатив, не наклоняйте корпус назад.'],
+    ['b-closebench', 'Жим узким хватом', 'Трицепс', 6, 10, 2.5, 'kg', 'total', 0, 'Хват чуть уже плеч, локти вдоль корпуса. Опускайте гриф к низу груди и выжимайте вверх. Тяжёлое базовое упражнение на трицепс.'],
+    ['b-pushdown', 'Разгибание рук на верхнем блоке', 'Трицепс', 10, 15, 2.5, 'kg', 'total', 0, 'Локти прижаты к бокам и не двигаются. Разгибайте руки до конца, сжимая трицепс, возвращайте до угла 90°.'],
+    ['b-frenchdb', 'Французский жим с гантелью', 'Трицепс', 8, 12, 2, 'kg', 'total', 0, 'Гантель двумя руками над головой, локти смотрят вверх. Опускайте за голову, разгибайте без разведения локтей.'],
+    ['b-skull', 'Французский жим лёжа', 'Трицепс', 8, 12, 2.5, 'kg', 'total', 0, 'Лёжа, штанга над грудью. Сгибайте только локти, опуская гриф ко лбу или за голову, и разгибайте обратно.'],
+    ['b-overhead', 'Разгибание руки над головой на блоке', 'Трицепс', 10, 15, 2.5, 'kg', 'total', 0, 'Канат за головой, локти вперёд. Сильнее растягивает длинную головку трицепса. Корпус неподвижен.'],
+    ['b-kickback', 'Разгибание руки в наклоне', 'Трицепс', 12, 15, 1, 'kg', 'arm', 0, 'Корпус параллельно полу, локоть прижат к корпусу. Разгибайте руку назад до пика и сжимайте трицепс.'],
+    ['b-plank', 'Планка', 'Пресс', 30, 60, 0, 'bw', 'total', 0, 'Опора на предплечья, тело прямая линия. Напрягите пресс и ягодицы, поясница не провисает. В поле повторов указывайте секунды.'],
+    ['b-hangleg', 'Подъём ног в висе', 'Пресс', 8, 15, 0, 'bw', 'total', 0, 'Вис на перекладине, без раскачки. Поднимайте ноги до уровня таза и выше, скручивая таз вверх, и медленно опускайте.'],
+    ['b-crunch', 'Скручивания на блоке', 'Пресс', 10, 15, 2.5, 'kg', 'total', 0, 'На коленях под блоком, канат у головы. Скручивайте корпус, приближая локти к бёдрам, поясница не работает.'],
+    ['b-abwheel', 'Ролик для пресса', 'Пресс', 8, 12, 0, 'bw', 'total', 0, 'Таз подкручен, спина круглая и без прогиба в пояснице. Откатывайтесь настолько, насколько можете сохранять корпус жёстким.'],
+    ['b-russian', 'Русские скручивания', 'Пресс', 12, 20, 2, 'kg', 'total', 0, 'Сидя, корпус отклонён назад, ноги слегка приподняты. Поворачивайте корпус из стороны в сторону, а не только руки.'],
+    ['b-farmer', 'Прогулка фермера', 'Другое', 20, 40, 2, 'kg', 'db', 0, 'Тяжёлые гантели в руках, плечи опущены, корпус ровный. Идите короткими шагами. В повторах указывайте шаги или секунды.'],
+    ['b-wristcurl', 'Сгибания кистей', 'Другое', 12, 20, 1, 'kg', 'db', 0, 'Предплечья на бёдрах ладонями вверх. Сгибайте только кисти, амплитуда полная. Для силы хвата и предплечий.']
+  ];
+  var BANK_BY = {}; BANK.forEach(function (b) { BANK_BY[b[0]] = b; });
+  function howFor(e) { return e.how || (e.bank && BANK_BY[e.bank] ? BANK_BY[e.bank][9] : ''); }
+  function bankMake(b) {
+    var warm = b[6] === 'kg', ap = b[6] === 'bw' ? [[0], [0], [0]] : warm ? [[0, 8, 1], [0], [0], [0]] : [[0], [0], [0]];
+    var o = D(uid(), b[1], b[2], b[3], b[4], b[5], ap, { kind: b[6], wtype: b[7], perSide: !!b[8] }); o.bank = b[0]; o.how = b[9]; return o;
+  }
+  function bankHTML() {
+    var q = (ui.bankQ || '').toLowerCase(), g = ui.bankG || '';
+    var have = {}; state.exercises.forEach(function (e) { if (e.bank) have[e.bank] = 1; });
+    var list = BANK.filter(function (b) { return (!g || b[2] === g) && (!q || b[1].toLowerCase().indexOf(q) >= 0); });
+    var chips = ['Все'].concat(GROUPS.filter(function (x) { return x !== 'Другое'; })).concat(['Другое']).map(function (x) { var on = (x === 'Все' && !g) || x === g; return '<button class="chipb" data-act="bank-g" data-g="' + (x === 'Все' ? '' : x) + '" aria-pressed="' + on + '">' + x + '</button>'; }).join('');
+    var days = state.routines.map(function (r) { return '<option value="' + r.id + '"' + (ui.bankDay === r.id ? ' selected' : '') + '>' + esc(r.name) + '</option>'; }).join('');
+    var items = list.map(function (b) {
+      var open = ui.bankOpen === b[0], added = have[b[0]];
+      return '<div class="card"><div class="row" style="flex-wrap:nowrap"><div class="stack" style="gap:2px;min-width:0"><h3>' + esc(b[1]) + '</h3><span class="hint">' + b[2] + ' · ' + b[3] + '–' + b[4] + (b[6] === 'bw' ? ' · свой вес' : '') + '</span></div>' +
+        (added ? '<span class="chip good">В программе</span>' : '<button class="btn small primary" data-act="bank-add" data-id="' + b[0] + '">Добавить</button>') + '</div>' +
+        '<button class="btn small" data-act="bank-how" data-id="' + b[0] + '" style="align-self:flex-start" aria-expanded="' + open + '">' + (open ? 'Скрыть технику' : 'Как делать') + '</button>' + (open ? '<p>' + esc(b[9]) + '</p>' : '') + '</div>';
+    }).join('');
+    return '<div class="card"><div class="row"><h3>Банк упражнений</h3><button class="btn small" data-act="bank-close">Закрыть</button></div>' +
+      '<div class="field"><label for="bankQ">Поиск</label><input id="bankQ" type="text" autocomplete="off" value="' + esc(ui.bankQ || '') + '" placeholder="Например: жим"></div>' +
+      '<div class="chips">' + chips + '</div>' +
+      (state.routines.length ? '<div class="field"><label for="bankDay">Сразу добавлять в день</label><select id="bankDay"><option value="">Только в список упражнений</option>' + days + '</select></div>' : '') + '</div>' +
+      (items || '<div class="empty"><p>Ничего не найдено.</p></div>') + '<p class="hint">Всего упражнений в банке: ' + BANK.length + '. Веса подбираются на первой тренировке, дальше приложение ведёт прогрессию само.</p>';
+  }
+
   /* ---------- модель и прогрессия ---------- */
   var exById = function (id) { return state.exercises.find(function (e) { return e.id === id; }); };
   var isDone = function (s) { return !!(s && s.done && s.r > 0 && s.w != null && s.w >= 0); };
@@ -724,7 +859,7 @@ details > summary::-webkit-details-marker { display: none; }
     var last = e.id ? lastLine(e) : null, wlab = wtLabel(e);
     return '<section class="card ex' + (all ? ' fin' : '') + '">' + head +
       '<div class="stack" style="gap:4px"><div class="target"><span class="hint">Цель</span><span class="big">' + esc(tgtText(e, { top: top, r: t.r })) + '</span>' + (e.bar ? platesHTML(top) : '') + '</div>' +
-      '<p class="hint">' + esc(t.reason || '') + '</p>' + (last ? '<p class="hint">В прошлый раз (рабочие): ' + esc(last) + '</p>' : '') + (wlab ? '<p class="hint">' + esc(wlab) + '</p>' : '') + (e.note ? '<p class="hint">' + esc(e.note) + '</p>' : '') + '</div>' +
+      (howFor(e) ? '<details class="how"><summary>Как делать</summary><p>' + esc(howFor(e)) + '</p></details>' : '') + '<p class="hint">' + esc(t.reason || '') + '</p>' + (last ? '<p class="hint">В прошлый раз (рабочие): ' + esc(last) + '</p>' : '') + (wlab ? '<p class="hint">' + esc(wlab) + '</p>' : '') + (e.note ? '<p class="hint">' + esc(e.note) + '</p>' : '') + '</div>' +
       '<div class="sets"><div class="sethead"><span></span><span>' + wHead + '</span><span>' + rHead + '</span><span></span><span></span></div>' + rows + '</div><div class="row"><button class="btn small" data-act="addset" data-e="' + ei + '">+ Подход</button><button class="btn small" data-act="delentry" data-e="' + ei + '">Убрать из тренировки</button></div></section>';
   }
   function liveStats() {
@@ -880,6 +1015,7 @@ details > summary::-webkit-details-marker { display: none; }
       '<label class="check"><input type="checkbox" data-fx="' + e.id + '" data-k="perSide"' + (e.perSide ? ' checked' : '') + '>Повторы считаются на каждую сторону</label>' +
       '<div class="grid2">' + num('lo', 'Повторов от', 'min="1" step="1" inputmode="numeric"') + num('hi', 'Повторов до', 'min="1" step="1" inputmode="numeric"') + (e.kind === 'bw' ? '' : num('inc', 'Шаг прибавки, кг', 'min="0.25" step="0.25" inputmode="decimal"')) + num('minSets', 'Минимум подходов для прибавки', 'min="1" step="1" inputmode="numeric" placeholder="все"') + '</div>' +
       '<div class="field"><label for="f-note">Заметка</label><input id="f-note" type="text" data-fx="' + e.id + '" data-k="note" value="' + esc(e.note) + '" placeholder="Например: по плану 53–60 кг"></div>' +
+      '<div class="field"><label for="f-how">Техника выполнения</label><textarea id="f-how" data-fx="' + e.id + '" data-k="how" rows="3" placeholder="Коротко: как делать упражнение">' + esc(e.how || '') + '</textarea></div>' +
       apprEditor(e) +
       '<label class="check"><input type="checkbox" data-fx="' + e.id + '" data-k="bar"' + (e.bar ? ' checked' : '') + '>Штанга: показывать блины на сторону</label>' +
       '<p class="hint">Как растёт вес: когда во всех рабочих подходах набрано верхнее число повторов, вес растёт на шаг, а повторы возвращаются к нижней границе. Пока этого нет, цель — добавлять по одному повтору. Разминка в расчёт не входит.</p>' +
@@ -908,7 +1044,7 @@ details > summary::-webkit-details-marker { display: none; }
         '<div class="target"><span class="hint">' + (t.first ? 'По плану' : 'Цель') + '</span><span class="big">' + esc(tgtText(e, t)) + '</span></div></div>';
     }).join('');
     return '<h1>Программа</h1>' + accountHTML() + head + importHTML() + '<h2>Тренировочные дни</h2>' + state.routines.map(routineHTML).join('') + '<button class="btn" data-act="rt-new">+ Новый день</button>' +
-      '<h2>Упражнения</h2>' + exs + '<button class="btn" data-act="ex-new">+ Новое упражнение</button>' +
+      (ui.bankOpen0 ? bankHTML() : '<button class="btn primary wide" data-act="bank-open">Банк упражнений (' + BANK.length + ')</button>') + '<h2>Упражнения</h2>' + exs + '<button class="btn" data-act="ex-new">+ Новое упражнение</button>' +
       '<h2>Настройки</h2><div class="card"><div class="grid2"><div class="field"><label for="s-rest">Отдых между подходами, сек</label><input id="s-rest" type="number" min="0" step="15" inputmode="numeric" data-set="rest" value="' + state.settings.rest + '"></div>' +
       '<div class="field"><label for="s-bar">Вес грифа, кг</label><input id="s-bar" type="number" min="0" step="0.5" inputmode="decimal" data-set="bar" value="' + state.settings.bar + '"></div></div></div>' +
       '<h2>Резервная копия</h2><div class="card"><p class="hint">Данные хранятся в этом браузере и, если страница открыта в аккаунте, дублируются в нём. Копию можно сохранить текстом.</p>' +
@@ -931,7 +1067,7 @@ details > summary::-webkit-details-marker { display: none; }
     var top = Math.max.apply(null, [0].concat(x.approaches.filter(function (a) { return !a.warm; }).map(function (a) { return a.w; })));
     x.group = x.group || guessGroup(x.name);
     if (!(x.inc > 0)) x.inc = x.kind === 'bw' ? 0 : x.wtype === 'db' || x.wtype === 'arm' ? 2 : x.kind === 'bw+' ? 2.5 : top >= 100 ? 5 : 2.5;
-    x.mult = calcMult(x); x.bar = false; x.note = x.note || ''; x.ss = x.ss || ''; x.minSets = x.minSets || 0;
+    x.mult = calcMult(x); x.bar = false; x.how = x.how || ''; x.bank = x.bank || ''; x.note = x.note || ''; x.ss = x.ss || ''; x.minSets = x.minSets || 0;
     if (x.kind === 'bw') x.approaches.forEach(function (a) { a.w = 0; });
     return x;
   }
@@ -1057,6 +1193,7 @@ details > summary::-webkit-details-marker { display: none; }
 
   /* ---------- отрисовка ---------- */
   function render() {
+    stpEl = null;
     var h;
     if (ui.tab === 'workout') {
       if (ui.summaryId) { var s = state.sessions.find(function (x) { return x.id === ui.summaryId; }); if (s) h = summaryHTML(s, 'fresh'); else ui.summaryId = null; }
@@ -1151,6 +1288,14 @@ details > summary::-webkit-details-marker { display: none; }
       case 'sc-merge': state = mergeStates(state, ui.syncChoice); persistLocal(); ui.syncChoice = null; cloudDirty = true; render(); return cloudPush().then(function () { render(); }).catch(function () { setSync('err'); });
       case 'sc-cloud': return adopt(ui.syncChoice);
       case 'sc-phone': ui.syncChoice = null; state.updatedAt = Date.now(); persistLocal(); cloudDirty = true; render(); return cloudPush().then(function () { render(); }).catch(function () { setSync('err'); });
+      case 'bank-open': ui.bankOpen0 = true; return render();
+      case 'bank-close': ui.bankOpen0 = false; ui.bankOpen = null; return render();
+      case 'bank-g': ui.bankG = d.g; return render();
+      case 'bank-how': ui.bankOpen = ui.bankOpen === d.id ? null : d.id; return render();
+      case 'bank-add': var bb = BANK_BY[d.id]; if (!bb) return; var bn = bankMake(bb); state.exercises.push(bn);
+        var dsel = $('#bankDay'), dv = dsel ? dsel.value : ''; ui.bankDay = dv;
+        if (dv) { var br = state.routines.find(function (r) { return r.id === dv; }); if (br) br.ex.push(bn.id); }
+        save(); render(); return toast(dv ? 'Добавлено в день' : 'Добавлено в упражнения');
       case 'copy':
         var txt = JSON.stringify(state), ta = $('#bkText'), fb = function () { var det = $('#bk'); if (det) det.open = true; if (ta) { ta.focus(); ta.select(); } toast('Выдели текст и скопируй вручную'); };
         try { navigator.clipboard.writeText(txt).then(function () { toast('Данные скопированы'); }, fb); } catch (x) { fb(); } return;
@@ -1179,9 +1324,42 @@ details > summary::-webkit-details-marker { display: none; }
     }
   }
   document.addEventListener('click', function (e) { var el = e.target.closest('[data-act]'); if (el) act(el); });
+
+  /* ---------- шаговые кнопки +/− у поля ---------- */
+  var stpEl = null, stpTimer = null;
+  function stpClose() { if (stpEl) { stpEl.remove(); stpEl = null; } }
+  function stpStep(t) {
+    if (t.dataset.k === 'r') return 1;
+    var en = state.active && state.active.entries[+t.dataset.e], ex = en && exById(en.ex), inc = ex && +ex.inc;
+    return inc > 0 ? inc : 2.5;
+  }
+  function stpLabel(t, st) {
+    var v = t.value === '' ? '—' : t.value;
+    return (t.dataset.k === 'r' ? 'Повторы: ' : 'Вес: ') + v + (t.dataset.k === 'r' ? '' : ' кг') + '<br>шаг ' + fmt(st);
+  }
+  document.addEventListener('focusin', function (e) {
+    var t = e.target; if (!(t.classList && t.classList.contains('inp') && state.active)) return;
+    clearTimeout(stpTimer); stpClose();
+    var row = t.closest('.set'); if (!row) return;
+    var st = stpStep(t); stpEl = document.createElement('div'); stpEl.className = 'stp';
+    stpEl.innerHTML = '<button type="button" data-stp="-1" aria-label="Уменьшить">−</button><span>' + stpLabel(t, st) + '</span><button type="button" data-stp="1" aria-label="Увеличить">+</button>';
+    row.after(stpEl);
+    stpEl.addEventListener('pointerdown', function (ev) { ev.preventDefault(); });
+    stpEl.addEventListener('click', function (ev) {
+      var b = ev.target.closest('button'); if (!b) return;
+      var cur = parseFloat(t.value); if (isNaN(cur)) { var s0 = state.active.entries[+t.dataset.e].sets[+t.dataset.i]; cur = (t.dataset.k === 'r' ? (s0.r || 0) : (s0.w || 0)); }
+      var nv = Math.max(0, Math.round((cur + (+b.dataset.stp) * st) * 100) / 100);
+      t.value = String(nv); t.dispatchEvent(new Event('input', { bubbles: true }));
+      stpEl.querySelector('span').innerHTML = stpLabel(t, st);
+    });
+  });
+  document.addEventListener('focusout', function (e) {
+    if (e.target.classList && e.target.classList.contains('inp')) { clearTimeout(stpTimer); stpTimer = setTimeout(function () { if (!document.activeElement || !document.activeElement.classList.contains('inp')) stpClose(); }, 180); }
+  });
   document.addEventListener('input', function (e) {
     var t = e.target;
     if (t.id === 'progText') { ui.impText = t.value; return; }
+    if (t.id === 'bankQ') { ui.bankQ = t.value; var pos = t.selectionStart; render(); var nq = $('#bankQ'); if (nq) { nq.focus(); try { nq.setSelectionRange(pos, pos); } catch (x) {} } return; }
     if (t.classList && t.classList.contains('inp') && state.active) {
       var s = state.active.entries[+t.dataset.e].sets[+t.dataset.i], v = t.value === '' ? null : parseFloat(t.value);
       s[t.dataset.k] = isNaN(v) ? null : v; save(); updateLive();
@@ -1208,7 +1386,7 @@ details > summary::-webkit-details-marker { display: none; }
         v = parseFloat(t.value);
         if (k === 'minSets') x.minSets = (isNaN(v) || v < 1) ? 0 : Math.min(Math.round(v), x.approaches.length);
         else { if (isNaN(v) || v < 0) return render(); if (k === 'lo' || k === 'hi') v = Math.max(1, Math.round(v)); if (k === 'inc') v = Math.max(0.25, v); x[k] = v; if (x.hi < x.lo) { if (k === 'lo') x.hi = x.lo; else x.lo = x.hi; } }
-      } else x[k] = k === 'note' ? t.value.trim() : (t.value.trim() || x[k]);
+      } else x[k] = (k === 'note' || k === 'how') ? t.value.trim() : (t.value.trim() || x[k]);
       if (k === 'kind' && x.kind === 'bw') x.approaches.forEach(function (a) { a.w = 0; });
       x.mult = calcMult(x); save(); return render();
     }
@@ -1216,7 +1394,7 @@ details > summary::-webkit-details-marker { display: none; }
     if (t.dataset.rts) { var r2 = state.routines.find(function (q) { return q.id === t.dataset.rts; }); if (r2) { r2.sub = t.value.trim(); save(); } return; }
     if (t.dataset.set) { v = parseFloat(t.value); if (!isNaN(v) && v >= 0) { state.settings[t.dataset.set] = v; save(); } else render(); }
   });
-  var SKIN_BG = { clean: '#F2F3F7', midnight: '#000000', volt: '#FFFFFF' };
+  var SKIN_BG = { clean: '#ECEAF8', midnight: '#000000', volt: '#F7F7F1' };
   function applySkin(k, store) {
     if (!SKIN_BG[k]) k = 'clean';
     document.documentElement.dataset.skin = k;
