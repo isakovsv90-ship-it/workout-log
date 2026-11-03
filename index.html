@@ -61,9 +61,11 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+body { overflow-x: clip; max-width: 100vw; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background-image: var(--bg-img); background-repeat: no-repeat; }
 body {
-  background-color: var(--bg); background-image: var(--bg-img); background-repeat: no-repeat; background-attachment: fixed; color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  background-color: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 12px 150px; font-variant-numeric: tabular-nums;
 }
@@ -335,7 +337,7 @@ details > summary { list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
 @media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
 #nav {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--nav-bg); border-top: 1px solid var(--nav-bd); -webkit-backdrop-filter: saturate(1.6) blur(14px); backdrop-filter: saturate(1.6) blur(14px);
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; transform: translate3d(0, 0, 0); -webkit-transform: translate3d(0, 0, 0); will-change: transform; background: var(--nav-bg); border-top: 1px solid var(--nav-bd); -webkit-backdrop-filter: saturate(1.6) blur(14px); backdrop-filter: saturate(1.6) blur(14px);
   padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
 }
 #nav .in { max-width: 720px; margin: 0 auto; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
@@ -1218,6 +1220,35 @@ details > summary::-webkit-details-marker { display: none; }
     });
   }
 
+  /* ---------- добавление в тренировку: свои, банк, производные ---------- */
+  var DER = [
+    { k: 'pause', n: 'с паузой', f: 0.9, how: 'Задержка 1–2 секунды в самой трудной точке без отскока. Вес ниже обычного.' },
+    { k: 'tempo', n: 'медленный негатив', f: 0.85, how: 'Опускание 3 секунды, подъём в обычном темпе. Вес ниже обычного.' },
+    { k: 'close', n: 'узкий хват', f: 0.85, how: 'Хват уже обычного: больше нагрузка на трицепс и внутреннюю часть мышцы.' },
+    { k: 'wide', n: 'широкий хват', f: 0.9, how: 'Хват шире обычного: акцент смещается на внешнюю часть мышцы. Не доводи до боли в суставах.' },
+    { k: 'light', n: 'лёгкая версия', f: 0.7, how: 'Лёгкий вес и больше повторов (+4): для разгрузки или техники.', dr: 4 }
+  ];
+  function addExHTML(avail) {
+    var have = {}; state.exercises.forEach(function (e) { if (e.bank) have[e.bank] = 1; });
+    var own = avail.map(function (e) { return '<option value="' + e.id + '">' + esc(e.name) + '</option>'; }).join('');
+    var bk = GROUPS.map(function (g) {
+      var l = BANK.filter(function (b) { return b[2] === g && !have[b[0]]; }); if (!l.length) return '';
+      return '<optgroup label="Банк · ' + esc(g) + '">' + l.map(function (b) { return '<option value="bank:' + b[0] + '">' + esc(b[1]) + '</option>'; }).join('') + '</optgroup>';
+    }).join('');
+    var base = state.exercises.map(function (e) { return '<option value="' + e.id + '">' + esc(e.name) + '</option>'; }).join('');
+    var vars = DER.map(function (d) { return '<option value="' + d.k + '">' + d.n + '</option>'; }).join('');
+    return '<div class="card"><h3>Добавить упражнение</h3><div class="selrow"><div class="field"><label for="addEx">Из моих и из банка</label><select id="addEx">' + (own ? '<optgroup label="Мои упражнения">' + own + '</optgroup>' : '') + bk + '</select></div><button class="btn" data-act="addex" style="align-self:flex-end">Добавить</button></div>' +
+      '<details><summary class="hint" style="cursor:pointer;min-height:36px;display:flex;align-items:center">Производное упражнение (вариация)</summary><div class="selrow"><div class="field"><label for="derBase">Основа</label><select id="derBase">' + base + '</select></div><div class="field"><label for="derVar">Вариация</label><select id="derVar">' + vars + '</select></div></div><button class="btn wide" data-act="addder" style="margin-top:8px">Создать и добавить</button><p class="hint">Вес считается от основного упражнения и записывается отдельно.</p></details></div>';
+  }
+  function deriveEx(baseId, key) {
+    var b = exById(baseId), d = DER.find(function (x) { return x.k === key; }); if (!b || !d) return null;
+    var have = state.exercises.find(function (x) { return x.base === b.id && x.dv === key; }); if (have) return have;
+    var n = JSON.parse(JSON.stringify(b)), tt = tplTop(b), T = b.kind === 'bw' ? 0 : targetFor(b, state.sessions).top, nt = roundTo(T * d.f, b.inc);
+    n.id = uid(); n.name = b.name + ' (' + d.n + ')'; n.base = b.id; n.dv = key; n.bank = ''; n.ss = ''; n.how = d.how + (b.how ? ' ' + b.how : '');
+    if (d.dr) { n.lo += d.dr; n.hi += d.dr; }
+    n.approaches = b.approaches.map(function (a) { return { w: b.kind === 'bw' ? 0 : (tt > 0 ? Math.min(nt, roundTo(a.w / tt * nt, b.inc)) : a.w), r: a.r, warm: a.warm }; });
+    state.exercises.push(n); return n;
+  }
   /* ---------- тренер ---------- */
   var COACH = {
     mass: { name: 'Набор массы', stall: 5, setsMax: 5, wk: [10, 20], tip: 'Рабочие 6–12 повторов, прибавка веса при выходе на верх диапазона, 10–20 подходов на группу в неделю.' },
@@ -1257,7 +1288,7 @@ details > summary::-webkit-details-marker { display: none; }
     if (pe && pe.ww === ev.ww && sum1(ev.atW) < 0.75 * sum1(pe.atW) && ev.status !== 'up') return { k: 'fatigue', lvl: 'warn', rank: 3, text: 'Повторов стало заметно меньше при том же весе: это усталость. Не добавляй вес, выспись и держи отдых ' + (rest ? rest + ' с' : 'дольше') + '.' };
     if (ev.status === 'fail') return { k: 'hold', lvl: 'info', rank: 5, text: 'Не добрал ' + e.lo + ' повторов. Оставь вес и закрой минимум. ' + (coachGoal() === 'strength' ? 'Отдых 2–4 минуты.' : 'Попробуй отдохнуть на 30 секунд дольше.') };
     if (ev.status === 'up') return e.kind === 'bw' ? { k: 'weight', lvl: 'good', rank: 4, text: 'Все подходы на ' + e.hi + '. Усложни: добавь паузу, медленный темп или доп. вес.' }
-      : { k: 'weight', lvl: 'good', rank: 4, text: 'Пора прибавлять вес: +' + fmt(e.inc) + ' кг. Все рабочие подходы дошли до ' + e.hi + '.' };
+      : (function () { var di = incFor(e, ev.ww, ev.minR); return { k: 'weight', lvl: 'good', rank: 4, text: 'Пора прибавлять вес: +' + fmt(di) + ' кг (' + fmt(Math.round(di / ev.ww * 1000) / 10) + '%). Все рабочие подходы дошли до ' + e.hi + (ev.minR - e.hi >= 2 ? ', запас большой, поэтому шаг крупнее' : '') + '. Разминку тоже пересчитаем от нового веса.' }; })();
     if (ev.status === 'repeat') {
       if (pe && pe.status === 'repeat' && workN > 2) return { k: 'sets-', lvl: 'info', rank: 5, text: 'Закрыть все подходы не получается второй раз подряд. Убери один рабочий подход (останется ' + (workN - 1) + ') или снизь вес на 5%.' };
       return { k: 'hold', lvl: 'info', rank: 6, text: 'В прошлый раз закрыты не все рабочие подходы. Оставь вес и закрой все.' };
@@ -1266,15 +1297,19 @@ details > summary::-webkit-details-marker { display: none; }
     var tip = st >= 2 && e.kind === 'kg' && e.inc > 1.25 ? ' Если застрял: шаг ' + fmt(e.inc) + ' кг велик, попробуй 1,25 кг.' : '';
     return { k: 'reps', lvl: 'info', rank: 6, text: 'Вес тот же, добавь повтор в каждом подходе, пока не дойдёшь до ' + e.hi + '.' + tip };
   }
-  function coachEntry(e) {
+  function coachEntry(e, en) {
     var a = coachAdvice(e, state.sessions); if (a.k === 'new') return '';
-    var r = coachRange(e);
+    var r = coachRange(e) + coachWarm(en);
     return '<div class="coach"><b>Тренер:</b> ' + esc(a.text) + (r ? ' ' + esc(r) : '') + (a.alts ? ' <button class="chipb" data-act="coach-go">Варианты замены</button>' : '') + '</div>';
   }
   function coachLiveHTML(en, e) { var t = coachLive(en, e); return t ? '<div class="coach live" role="status"><b>Тренер:</b> ' + esc(t) + '</div>' : ''; }
   function coachSum(i, s) {
     if (i.e.missing) return ''; var a = coachAdvice(i.e, state.sessions.slice(0, state.sessions.indexOf(s) + 1)); if (a.k === 'new') return '';
     return '<div class="coach" style="margin-top:8px"><b>Тренер:</b> ' + esc(a.text) + '</div>';
+  }
+  function coachWarm(en) {
+    var w = en && en.sets.filter(function (x) { return x.warm; }); if (!w || !w.length) return '';
+    return ' Разминка: ' + w.map(function (x) { return fmt(x.w) + '×' + x.r; }).join(', ') + ' (тяжёлые короткие подходы, без усталости).';
   }
   function coachRange(e) {
     var g = coachGoal();
@@ -1333,7 +1368,7 @@ details > summary::-webkit-details-marker { display: none; }
         (wk ? '<div class="divider"></div><span class="hint">Рабочих подходов за 7 дней (норма для цели)</span><div class="stack" style="font-size:14px;gap:4px">' + wk + '</div>' : '');
     }
     return '<section class="card" id="coach"><h3>Совет тренера</h3><div class="chips" role="group" aria-label="Цель тренировок">' + chips + '</div><p class="hint">' + esc(C.tip) + '</p>' + body +
-      '<div class="divider"></div><button class="chipb' + (state.settings.adapt !== false ? ' on' : '') + '" data-act="coach-adapt" aria-pressed="' + (state.settings.adapt !== false) + '">Умный отдых: ' + (state.settings.adapt !== false ? 'вкл' : 'выкл') + '</button><p class="hint">Отдых между подходами подстраивается: тяжёлый подход на нижней границе повторов даёт +30 секунд.</p></section>';
+      '<div class="divider"></div><button class="chipb' + (state.settings.autoWarm !== false ? ' on' : '') + '" data-act="coach-warm" aria-pressed="' + (state.settings.autoWarm !== false) + '">Умная разминка: ' + (state.settings.autoWarm !== false ? 'вкл' : 'выкл') + '</button> <button class="chipb' + (state.settings.adapt !== false ? ' on' : '') + '" data-act="coach-adapt" aria-pressed="' + (state.settings.adapt !== false) + '">Умный отдых: ' + (state.settings.adapt !== false ? 'вкл' : 'выкл') + '</button><p class="hint">Отдых между подходами подстраивается: тяжёлый подход на нижней границе повторов даёт +30 секунд.</p></section>';
   }
   function coachDay(rt) {
     var n = 0, m = 0; rt.ex.map(exById).filter(Boolean).forEach(function (e) { m++; var a = coachAdvice(e, state.sessions); if (a.k === 'weight') n++; });
@@ -1461,18 +1496,42 @@ details > summary::-webkit-details-marker { display: none; }
     });
     return out;
   }
-  function buildSets(e, top, r) {
-    var tt = tplTop(e);
-    return e.approaches.map(function (a) {
+  function warmPlan(e, top, follow) {
+    var bar = e.bar ? (+state.settings.bar || 20) : 0, step = Math.min(e.inc || 2.5, 2.5), sch;
+    if (follow || top < 20) sch = [[0.6, 5]];
+    else if (top < 50) sch = [[0.5, 8], [0.75, 4]];
+    else if (top >= 100 && coachGoal() === 'strength') sch = [[0.4, 8], [0.6, 5], [0.75, 3], [0.9, 1]];
+    else sch = [[0.4, 8], [0.6, 5], [0.8, 3]];
+    var out = [];
+    sch.forEach(function (x) {
+      var w = Math.max(roundTo(top * x[0], step), bar); if (w >= top * 0.97 || (out.length && w <= out[out.length - 1].w)) return;
+      out.push({ w: w, r: x[1] });
+    });
+    if (!out.length && bar && top > bar) out.push({ w: bar, r: 8 });
+    return out;
+  }
+  function buildSets(e, top, r, o) {
+    o = o || {}; var tt = tplTop(e), wi = 0, wdone = false, out = [];
+    var plan = e.kind === 'kg' && state.settings.autoWarm !== false && e.approaches.some(function (a) { return a.warm; }) ? warmPlan(e, top, o.follow) : null;
+    e.approaches.forEach(function (a) {
+      if (a.warm && plan) { if (!wdone) { wdone = true; plan.forEach(function (p) { out.push({ w: p.w, r: p.r, warm: true }); }); } return; }
       var w;
       if (e.kind === 'bw') w = 0;
-      else if (top === tt) w = a.w;
       else if (!a.warm && a.w === tt) w = top;
+      else if (top === tt) w = a.w;
       else w = tt > 0 ? Math.min(top, roundTo(a.w / tt * top, e.inc)) : a.w;
-      return { w: w, r: a.warm ? (a.r || e.lo) : r, warm: !!a.warm };
+      if (!a.warm && e.kind !== 'bw' && a.w !== tt && o.ratios && o.ratios[wi] != null) w = Math.min(top, roundTo(o.ratios[wi] * top, Math.min(e.inc, 2.5)));
+      if (!a.warm) wi++;
+      out.push({ w: w, r: a.warm ? (a.r || e.lo) : r, warm: !!a.warm });
     });
+    return out;
   }
-  function targetFor(e, prior) {
+  function incFor(e, ww, minR) {
+    var step = e.inc > 0 ? e.inc : 2.5, pct = e.group === 'Ноги' ? 0.05 : 0.025, n = Math.max(1, Math.round(ww * pct / step)), ex = minR - e.hi;
+    if (ex >= 2) n += 1; if (ex >= 4) n += 1;
+    return Math.max(step, Math.min(n, Math.max(1, Math.floor(ww * 0.1 / step))) * step);
+  }
+  function targetFor(e, prior, live) {
     var h = histFor(e.id, prior), top = tplTop(e), r = e.lo, reason, first = false;
     if (!h.length) {
       first = true; reason = e.kind === 'kg' || e.kind === 'bw+' ? 'Первая тренировка: веса из программы. Подбери вес так, чтобы последний повтор шёл с запасом сил.' : 'Первая тренировка: цель по повторам из программы.';
@@ -1481,7 +1540,7 @@ details > summary::-webkit-details-marker { display: none; }
       if ((ev.status === 'repeat' || ev.status === 'fail') && pt != null && ev.ww < pt && e.kind !== 'bw') { top = pt; r = lastH.t.r || e.lo; reason = 'В прошлый раз до плановых рабочих подходов не дошли. Цель та же: ' + fmt(pt) + ' кг.'; }
       else if (ev.status === 'up') {
         if (e.kind === 'bw') { r = e.hi; reason = 'Все подходы на ' + e.hi + '. Повтори с хорошей техникой или добавь паузу или темп.'; }
-        else { top = roundTo(ev.ww + e.inc, Math.min(e.inc, 0.5)); r = e.lo; reason = 'Все рабочие подходы на ' + e.hi + ' и больше повторов. Прибавляем ' + fmt(e.inc) + ' кг.'; }
+        else { var di = incFor(e, ev.ww, ev.minR); top = roundTo(ev.ww + di, Math.min(e.inc, 0.5)); r = e.lo; reason = 'Все рабочие подходы на ' + e.hi + (ev.minR - e.hi >= 2 ? ' с запасом' : '') + '. Прибавляем ' + fmt(di) + ' кг (' + fmt(Math.round(di / ev.ww * 1000) / 10) + '%).'; }
       } else if (ev.status === 'add') { r = Math.min(e.hi, ev.minR + 1); reason = 'Вес тот же. Добавь повтор: цель ' + r + ' в каждом рабочем подходе, до ' + e.hi + ' для прибавки веса.'; }
       else if (ev.status === 'repeat') { r = Math.max(e.lo, ev.minR); reason = 'В прошлый раз выполнены не все рабочие подходы. Повтори вес и закрой все.'; }
       else {
@@ -1490,7 +1549,14 @@ details > summary::-webkit-details-marker { display: none; }
         else reason = 'Не добрал ' + e.lo + ' повторов в каждом рабочем подходе. Повтори вес.';
       }
     }
-    return { top: top, r: r, hi: e.hi, sets: buildSets(e, top, r), need: needTop(e), reason: reason, first: first };
+    var ratios = null, follow = false;
+    if (h.length && e.kind !== 'bw') {
+      var lw = h[h.length - 1].sets.filter(function (x) { return !x.warm; }), mx = Math.max.apply(null, lw.map(function (x) { return x.w; }));
+      if (mx > 0 && lw.length === e.approaches.filter(function (a) { return !a.warm; }).length) ratios = lw.map(function (x) { return x.w / mx; });
+      var gap = (Date.now() - h[h.length - 1].s.start) / 864e5;
+      if (live && gap >= 14) { var f = gap >= 28 ? 0.9 : 0.95; top = roundTo(top * f, Math.min(e.inc, 2.5)); reason = (reason ? reason + ' ' : '') + 'Перерыв ' + Math.round(gap) + ' дн.: вес ниже на ' + (gap >= 28 ? 10 : 5) + '%, чтобы вернуться плавно.'; }
+    }
+    return { top: top, r: r, hi: e.hi, sets: buildSets(e, top, r, { ratios: ratios }), ratios: ratios, need: needTop(e), reason: reason, first: first };
   }
   function tInfo(e, t) { return { top: t.top, r: t.r, hi: e.hi, need: t.need, reason: t.reason, first: !!t.first, n: t.sets.length }; }
   var entryVol = function (en) { return sum(en.sets.filter(function (s) { return isDone(s) && !s.warm; }).map(function (s) { return s.w * s.r; })) * (en.mult || 1); };
@@ -1559,8 +1625,10 @@ details > summary::-webkit-details-marker { display: none; }
   var ssPartner = function (e) { return e && e.ss ? state.exercises.find(function (x) { return x.ss === e.ss && x.id !== e.id; }) : null; };
 
   /* ---------- тренировка ---------- */
-  function mkEntry(e) {
-    var t = targetFor(e, state.sessions);
+  function mkEntry(e, prev) {
+    var t = targetFor(e, state.sessions, true);
+    var follow = (prev || []).some(function (q) { var x = exById(q.ex); return x && x.group === e.group && e.group !== 'Другое' && x.kind !== 'bw'; });
+    if (follow) t.sets = buildSets(e, t.top, t.r, { ratios: t.ratios, follow: true });
     return { ex: e.id, name: e.name, mult: e.mult, kind: e.kind, perSide: e.perSide, t: tInfo(e, t), sets: t.sets.map(function (s) { return { w: s.w, r: s.r, done: false, warm: s.warm }; }) };
   }
   function openFirst() {
@@ -1572,7 +1640,7 @@ details > summary::-webkit-details-marker { display: none; }
     var last = state.sessions[state.sessions.length - 1], P = state.program;
     var cards = state.routines.map(function (rt) {
       var lines = rt.ex.map(exById).filter(Boolean).map(function (e) {
-        var t = targetFor(e, state.sessions);
+        var t = targetFor(e, state.sessions, true);
         return '<div class="row" style="flex-wrap:nowrap;align-items:baseline"><span>' + esc(e.name) + '</span><span class="muted" style="flex:none;max-width:48%;text-align:right">' + esc(tgtText(e, t)) + '</span></div>';
       }).join('');
       return '<div class="card"><div class="row"><div class="stack" style="gap:0"><h3>' + esc(rt.name) + '</h3><span class="hint">' + esc(rt.sub || '') + '</span></div><button class="btn primary" data-act="start" data-id="' + rt.id + '">Начать</button></div>' +
@@ -1603,7 +1671,7 @@ details > summary::-webkit-details-marker { display: none; }
     var last = e.id ? lastLine(e) : null, wlab = wtLabel(e);
     return '<section class="card ex' + (all ? ' fin' : '') + '">' + head +
       '<div class="stack" style="gap:4px"><div class="target"><span class="hint">Цель</span><span class="big">' + esc(tgtText(e, { top: top, r: t.r })) + '</span>' + (e.bar ? platesHTML(top) : '') + '</div>' +
-      (howFor(e) ? '<details class="how"><summary>Как делать</summary><p>' + esc(howFor(e)) + '</p></details>' : '') + '<p class="hint">' + esc(t.reason || '') + '</p>' + (e.id ? coachEntry(e) : '') + (last ? '<p class="hint">В прошлый раз (рабочие): ' + esc(last) + '</p>' : '') + (wlab ? '<p class="hint">' + esc(wlab) + '</p>' : '') + (e.note ? '<p class="hint">' + esc(e.note) + '</p>' : '') + '</div>' +
+      (howFor(e) ? '<details class="how"><summary>Как делать</summary><p>' + esc(howFor(e)) + '</p></details>' : '') + '<p class="hint">' + esc(t.reason || '') + '</p>' + (e.id ? coachEntry(e, en) : '') + (last ? '<p class="hint">В прошлый раз (рабочие): ' + esc(last) + '</p>' : '') + (wlab ? '<p class="hint">' + esc(wlab) + '</p>' : '') + (e.note ? '<p class="hint">' + esc(e.note) + '</p>' : '') + '</div>' +
       '<div class="sets"><div class="sethead"><span></span><span>' + wHead + '</span><span>' + rHead + '</span><span></span><span></span></div>' + rows + '</div>' + (e.id ? coachLiveHTML(en, e) : '') + '<div class="row"><button class="btn small" data-act="addset" data-e="' + ei + '">+ Подход</button><button class="btn small" data-act="delentry" data-e="' + ei + '">Убрать из тренировки</button></div></section>';
   }
   function liveStats() {
@@ -1624,7 +1692,7 @@ details > summary::-webkit-details-marker { display: none; }
       '<div class="tiles"><div class="tile"><b id="lsets">' + ls.done + ' из ' + ls.total + '</b><span>подходов</span></div><div class="tile"><b id="lvol">' + fmt(Math.round(ls.vol)) + '</b><span>рабочий объём, кг</span></div></div>' +
       '<p class="hint">Упражнения можно делать в любом порядке: открывай нужную карточку, отмечай подход и переходи к другой. Первый подход — разминка (Р), он входит в общее число подходов.</p>' +
       a.entries.map(entryHTML).join('') +
-      (avail.length ? '<div class="card"><div class="selrow"><div class="field"><label for="addEx">Добавить упражнение</label><select id="addEx">' + avail.map(function (e) { return '<option value="' + e.id + '">' + esc(e.name) + '</option>'; }).join('') + '</select></div><button class="btn" data-act="addex" style="align-self:flex-end">Добавить</button></div></div>' : '') +
+      addExHTML(avail) +
       (conf || '<div class="row"><button class="btn primary" style="flex:1" data-act="finish">Завершить тренировку</button><button class="btn danger" data-act="discard">Отменить</button></div>');
   }
 
@@ -1990,9 +2058,10 @@ details > summary::-webkit-details-marker { display: none; }
       case 'start':
         rt = state.routines.find(function (r) { return r.id === d.id; });
         state.active = { id: uid(), routine: rt ? rt.id : null, name: rt ? rt.name : 'Свободная тренировка', start: Date.now(), entries: [] };
-        if (rt) rt.ex.forEach(function (id) { var x = exById(id); if (x) state.active.entries.push(mkEntry(x)); });
+        if (rt) rt.ex.forEach(function (id) { var x = exById(id); if (x) state.active.entries.push(mkEntry(x, state.active.entries)); });
         ui.summaryId = null; ui.open = {}; openFirst(); save(); return render();
       case 'coach-goal': state.profile = state.profile || {}; state.profile.tg = d.k; save(); return render();
+      case 'coach-warm': state.settings.autoWarm = state.settings.autoWarm === false; save(); return render();
       case 'coach-adapt': state.settings.adapt = state.settings.adapt === false; save(); return render();
       case 'coach-rep': return coachReplace(d.ex, d.id);
       case 'coach-go': ui.tab = 'progress'; render(); var cc = document.getElementById('coach'); if (cc) cc.scrollIntoView(); return;
@@ -2002,13 +2071,16 @@ details > summary::-webkit-details-marker { display: none; }
         en = ac.entries[+d.e]; s = en.sets[+d.i];
         if (s.done) s.done = false; else {
           if (!(s.r > 0) || s.w == null || s.w < 0) return toast('Укажи вес и повторы');
-          s.done = true; startRest(en.name, restFor(en, s));
+          s.done = true; startRest(en.name, restFor(en, s)); if (en.sets.every(isDone)) ui.open[en.ex] = false;
         }
         save(); render(); var cb = document.querySelector('[data-act="done"][data-e="' + d.e + '"][data-i="' + d.i + '"]'); if (cb && s.done) cb.classList.add('pop'); return;
       case 'delset': ac.entries[+d.e].sets.splice(+d.i, 1); save(); return render();
       case 'addset': en = ac.entries[+d.e]; var ls = en.sets[en.sets.length - 1]; en.sets.push({ w: ls ? ls.w : en.t.top, r: ls ? ls.r : en.t.r, done: false, warm: false }); save(); return render();
       case 'delentry': ac.entries.splice(+d.e, 1); save(); return render();
-      case 'addex': var sel = $('#addEx'); if (sel && exById(sel.value)) { ac.entries.push(mkEntry(exById(sel.value))); ui.open[sel.value] = true; save(); render(); } return;
+      case 'addex': var sel = $('#addEx'); if (!sel) return; var xid = sel.value;
+        if (xid.indexOf('bank:') === 0) { var bb0 = BANK_BY[xid.slice(5)]; if (!bb0) return; var nb = bankMake(bb0); state.exercises.push(nb); xid = nb.id; }
+        if (exById(xid)) { ac.entries.push(mkEntry(exById(xid), ac.entries)); ui.open[xid] = true; save(); render(); } return;
+      case 'addder': var dx = deriveEx(($('#derBase') || {}).value, ($('#derVar') || {}).value); if (!dx) return; if (ac.entries.some(function (q) { return q.ex === dx.id; })) return toast('Уже в тренировке'); ac.entries.push(mkEntry(dx, ac.entries)); ui.open[dx.id] = true; save(); render(); return;
       case 'finish': ui.confirm = 'finish'; return render();
       case 'discard': ui.confirm = 'discard'; return render();
       case 'confirm-no': ui.confirm = null; return render();
